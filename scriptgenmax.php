@@ -268,7 +268,29 @@ class scriptgenmax
      * $_file will be saved to export_dir specified in config file
      */
     private function generateObjectCrudActionProcessScriptFile($_file) {
-    
+        // clia command API:
+        
+        $_script_code = (array) array();
+        $_line = (string) "";
+        
+        foreach ($this->_data as $key => $value) {
+            if (array_key_exists('id', $value) && array_key_exists('primaryOwner', $value) && array_key_exists('primaryOwnerCRUD', $value) && array_key_exists('groupOwner', $value) && array_key_exists('groupOwnerCRUD', $value)) {
+                $_line = preg_replace("/%poc/", $value['primaryOwnerCRUD'],self::MAX_CLIA_DATAVIEW);
+                $_line = preg_replace("/%goc/", $value['groupOwnerCRUD'], $_line);
+                $_line = preg_replace("/%po/", $value['primaryOwner'], $_line);
+                $_line = preg_replace("/%go/", $value['groupOwner'], $_line);
+                if ($_line) {
+                    $_script_code[] = $_line;
+                }
+            } else {
+                $this->addErrorRecord("Could not find required columns to import row data", implode(',', $value), __FUNCTION__);
+            }
+        }
+        if ($_script_code) {
+            return $_script_code;
+        } else {
+            return FALSE;
+        }
     }
     
     /**
@@ -277,7 +299,10 @@ class scriptgenmax
      * $_file will be saved to export_dir specified in config file
      */
     private function generateUserMembershipScriptFile($_file) {
-        // clia command API:
+        /* clia command API:
+         *      MAX_CLIA_DEL_USER_GROUPS = "clia deleteUsersMembershipFromAllGroups email=%e";
+         *      MAX_CLIA_ADD_USER_TO_GROUP = "clia addUserToGroups email=%e groups=%g";
+         */
 
         $_script_code = (array) array();
         $_line = (string) "";
