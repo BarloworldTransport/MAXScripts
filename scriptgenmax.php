@@ -269,16 +269,20 @@ class scriptgenmax
      */
     private function generateObjectCrudActionProcessScriptFile($_file) {
         // clia command API:
+      
+      // clia ObjectRegistry setProcessOwners objectRegistry=%ob handle=%hd owner='%on' ownerCrud=%oc group='%gn' groupCrud=%gc
         
         $_script_code = (array) array();
         $_line = (string) "";
         
         foreach ($this->_data as $key => $value) {
             if (array_key_exists('id', $value) && array_key_exists('primaryOwner', $value) && array_key_exists('primaryOwnerCRUD', $value) && array_key_exists('groupOwner', $value) && array_key_exists('groupOwnerCRUD', $value)) {
-                $_line = preg_replace("/%poc/", $value['primaryOwnerCRUD'],self::MAX_CLIA_DATAVIEW);
-                $_line = preg_replace("/%goc/", $value['groupOwnerCRUD'], $_line);
-                $_line = preg_replace("/%po/", $value['primaryOwner'], $_line);
-                $_line = preg_replace("/%go/", $value['groupOwner'], $_line);
+                $_line = preg_replace("/%oc/", $value['primaryOwnerCRUD'],self::MAX_CLIA_OBJ_PROCESS);
+                $_line = preg_replace("/%gc/", $value['groupOwnerCRUD'], $_line);
+                $_line = preg_replace("/%on/", $value['primaryOwner'], $_line);
+                $_line = preg_replace("/%gn/", $value['groupOwner'], $_line);
+              $_line = preg_replace("/%ob/", $value['objectRegistry'], $_line);
+              $_line = preg_replace("/%hd/", $value['handle'], $_line);
                 if ($_line) {
                     $_script_code[] = $_line;
                 }
