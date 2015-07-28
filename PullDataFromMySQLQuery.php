@@ -29,7 +29,7 @@ class PullDataFromMySQLQuery {
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 			PDO::ATTR_PERSISTENT => true 
 	);
-	protected $_inifile = "/ini/report_data.ini";
+	protected $_inifile = "/config/report_data.ini";
 	protected $_errors = array ();
 	
 	// : Public functions
