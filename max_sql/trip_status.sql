@@ -1,0 +1,1 @@
+select ca.id, IF(count(tlc.tripLeg_id), 'YES', 'NO') as tripleg, IF(count(db.id), 'YES', 'NO') as is_debriefed, IF(ca.imageGroup_id, 'YES', 'NO') as ocr_images from udo_cargo as ca left join udo_triplegcargo as tlc on (tlc.cargo_id=ca.id) left join udo_debrief as db on (db.tripLeg_id=tlc.tripLeg_id) where ca.id=%d;

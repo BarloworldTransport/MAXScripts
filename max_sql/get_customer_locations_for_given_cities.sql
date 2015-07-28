@@ -1,0 +1,1 @@
+select cu.tradingName, cl.id as city_id, locc.name, locp.name from udo_customerlocations as cl left join udo_customer as cu on (cu.id=cl.customer_id) left join udo_location as locc on (locc.id=cl.location_id) left join udo_location as locp on (locp.id=locc.parent_id) where locp.name IN () and cu.tradingName = "";

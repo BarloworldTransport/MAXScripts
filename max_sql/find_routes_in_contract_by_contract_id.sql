@@ -1,0 +1,1 @@
+select lf.name, lt.name from udo_fandvcontractroute_link as rl left join udo_route as ro on (ro.id=rl.route_id) left join udo_location as lf on (lf.id=ro.locationFrom_id) left join udo_location as lt on (lt.id=ro.locationTo_id) where rl.fandVContract_id=579 order by lf.name, lf.name\G

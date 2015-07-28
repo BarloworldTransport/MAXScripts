@@ -1,0 +1,1 @@
+select f.name from udo_fleettrucklink as ftl left join udo_fleet as f on (f.id=ftl.fleet_id) left join udo_truck as t on (t.id=truck_id) where ftl.truck_id IN (select id from udo_truck where fleetnum="E99");

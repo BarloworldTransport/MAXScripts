@@ -1,0 +1,1 @@
+select drv.id, drv.beginDate, drv.endDate, drv.objectInstanceId, drv.type from udo_rates as ra left join daterangevalue as drv on (drv.objectInstanceId=ra.id and drv.type="Rate") left join udo_route as ro on (ro.id=ra.route_id) left join udo_location as lf on (lf.id=ro.locationFrom_id) left join udo_location as lt on (lt.id=ro.locationTo_id) where lf.name="";

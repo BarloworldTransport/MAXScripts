@@ -1,0 +1,1 @@
+select off.id, "Dedicated" as bu from udo_offloadingcustomers as off left join udo_customer as cu on (cu.id=off.customer_id) left join udo_customer as offcu on (offcu.id=off.offloadingCustomer_id) left join udo_offloadingcustomersbusinessunit_link as offbu on (offbu.offloadingCustomers_id=off.id) where cu.tradingName IN ("PPC-Heriotdale") and offbu.id IS NULL;

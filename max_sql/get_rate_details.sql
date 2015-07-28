@@ -1,0 +1,8 @@
+select id from udo_rates order by id desc limit 30;
+
+
+select c.tradingName as customerName, ra.id as rate_id, lf.name as locationFrom, lt.name as locationTo, td.description as truck_description from udo_rates as ra left join udo_route as ro on (ro.id=ra.route_id) left join udo_location as lf on (lf.id=ro.locationFrom_id) left join udo_location as lt on (lt.id=ro.locationTo_id) left join udo_customer as c on (c.id=ra.objectInstanceId) left join udo_truckdescription as td on (td.id=ra.truckdescription_id) where ra.id IN ();
+
+select c.tradingName as customerName, ra.id as rate_id, lf.name as locationFrom, lt.name as locationTo, td.description as truck_description from udo_rates as ra left join udo_route as ro on (ro.id=ra.route_id) left join udo_location as lf on (lf.id=ro.locationFrom_id) left join udo_location as lt on (lt.id=ro.locationTo_id) left join udo_customer as c on (c.id=ra.objectInstanceId) left join udo_truckdescription as td on (td.id=ra.truckdescription_id) where ra.id IN (33420);
+
+select c.tradingName as customerName, ra.id as rate_id, lf.name as locationFrom, lt.name as locationTo, td.description as truck_description from udo_rates as ra left join udo_route as ro on (ro.id=ra.route_id) left join udo_location as lf on (lf.id=ro.locationFrom_id) left join udo_location as lt on (lt.id=ro.locationTo_id) left join udo_customer as c on (c.id=ra.objectInstanceId) left join udo_truckdescription as td on (td.id=ra.truckdescription_id) where c.tradingName = "NCP Chlorochem - Chlorine" and lt.name like "%zone%" and ra.enabled = 1 and lt.name NOT like "%Plasticlor - ACH Blends - Alifloc - Poly Amine%";

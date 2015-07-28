@@ -1,0 +1,1 @@
+select ro.id as ID, lf.name as locationFrom, pf.name as ParentFrom, lt.name as locationTo, pt.name as ParentTo from udo_route as ro left join udo_location as lf on (lf.id=ro.locationFrom_id) left join udo_location as lt on (lt.id=ro.locationTo_id) left join udo_location as pf on (pf.id=lf.parent_id) left join udo_location as pt on (pt.id=lt.parent_id) where ro.id=;

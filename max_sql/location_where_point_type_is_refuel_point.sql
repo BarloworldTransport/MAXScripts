@@ -1,0 +1,1 @@
+select l.id, l.name from udo_location as l left join udo_point_point_type as ppt on (ppt.Point_id=l.id) left join udo_point_type as pt on (pt.id=ppt.Point_Type_id) where l._type="udo_Point" and pt.name like "refuel%" and l.name like "%%";

@@ -1,0 +1,1 @@
+select t.fleetnum from udo_fleettrucklink as flt left join udo_fleet as f on (f.id = flt.fleet_id) left join udo_truck as t on (t.id = flt.truck_id) where f.name IN ("Watson Transport") order by t.fleetnum asc;

@@ -1,0 +1,3 @@
+select ID from udo_rates where route_id IN (select ID from udo_route where locationTo_id IN (select ID from udo_location where name='400kms Zone Caustic')) and objectregistry_id=461 and objectInstanceId=18065 and truckDescription_id=21 and enabled=1 and model='Energy (tankers)' and businessUnit_id=1 and rateType_id=1;
+
+select ro.id, drv.beginDate, drv.endDate, drv.value from udo_rates as ro left join daterangevalue as drv on (drv.objectInstanceId = ro.id) where ro.objectregistry_id=461 and ro.objectInstanceId=18065 and ro.truckDescription_id=21 and ro.enabled=1 and ro.model='Energy (tankers)' and ro.businessUnit_id=1 and ro.rateType_id=1 and drv.type="Rate";
