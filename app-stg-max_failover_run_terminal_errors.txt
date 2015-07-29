@@ -1,0 +1,27 @@
+www-data@app-stg-max:/tmp$ sh dataview_failover.sh 
+Failed. Reason: Views with id  41 not found.
+Failed. Reason: Views with id  42 not found.
+Failed. Reason: No object with handle: GraphDataView
+Failed. Reason: Views with id  483 not found.
+Failed. Reason: No such registered item with id: 723
+Failed. Reason: No such registered item with id: 337
+Failed. Reason: Views with id  593 not found.
+Failed. Reason: Views with id  594 not found.
+Failed. Reason: No such registered item with id: 615
+Failed. Reason: Views with id  616 not found.
+Failed. Reason: Views with id  743 not found.
+www-data@app-stg-max:/tmp$ sh objectcrudactionprocess_failover.sh 
+Failed. Reason: The version control item with handle: ParameterUpdate__Process__20091125143214 does not exist.
+Failed. Reason: No object with handle: ReleaseNote
+Failed. Reason: No object with handle: ReleaseNote
+Failed. Reason: No object with handle: ReleaseNote
+Failed. Reason: The version control item with handle: Report_createFieldsAndFilters__Process__20050101090000 does not exist.
+Failed. Reason: No object with handle: 
+Failed. Reason: No object with handle: 
+Failed. Reason: No object with handle: 
+www-data@app-stg-max:/tmp$ sh objectregistry_failover.sh 
+Failed. Reason: No object with handle: ReleaseNote
+Failed. Reason: No object with handle: ReleaseNote
+Failed. Reason: No object with handle: ReleaseNote
+Failed. Reason: No object with handle: ReleaseNote
+
