@@ -41,20 +41,20 @@ class scriptgenmax
      * clia addUserToGroups email= groups=<group names comma seperated>
      */
      
-    const MAX_CLIA_DEL_USER_GROUPS = "clia deleteUsersMembershipFromAllGroups email=%e";
-    const MAX_CLIA_ADD_USER_TO_GROUP = "clia addUserToGroups email=%e groups=%g";
+    const MAX_CLIA_DEL_USER_GROUPS = "\$clia deleteUsersMembershipFromAllGroups email=%e";
+    const MAX_CLIA_ADD_USER_TO_GROUP = "\$clia addUserToGroups email=%e groups=%g";
         
     // : End
     // : MAX clia command to update dataview permissions using dataview id
-    const MAX_CLIA_DATAVIEW = "clia DataView setPermissionsForId dataViewId=%id primaryOwner='%po' primaryOwnerCrud=%poc groupOwner='%go' groupOwnerCrud=%goc";
+    const MAX_CLIA_DATAVIEW = "\$clia DataView setPermissionsForId dataViewId=%id primaryOwner='%po' primaryOwnerCrud=%poc groupOwner='%go' groupOwnerCrud=%goc";
     // : End
     // : MAX clia commands to update permissions for objectCrudActionProcess entries
-    const MAX_CLIA_OBJ_PROCESS = "clia ObjectRegistry setProcessOwners objectRegistry=%ob handle=%hd owner='%on' ownerCrud=Create,Read,Update,Delete group='%gn' groupCrud=%gc";
+    const MAX_CLIA_OBJ_PROCESS = "\$clia ObjectRegistry setProcessOwners objectRegistry=%ob handle=%hd owner='%on' ownerCrud=Create,Read,Update,Delete group='%gn' groupCrud=%gc";
     
-    const MAX_CLIA_OBJ_POG = "clia ObjectRegistry setObjectPrimaryOwnerGroup objectRegistry=%o group='%g'";
-    const MAX_CLIA_OBJ_PCRUD = "clia ObjectRegistry setObjectPrimaryOwnerCrud objectRegistry=%o crud=%c";
-    const MAX_CLIA_OBJ_GOG = "clia ObjectRegistry setObjectGroupOwnerGroup objectRegistry=%o group='%g'";
-    const MAX_CLIA_OBJ_GCRUD = "clia ObjectRegistry setObjectGroupOwnerCrud objectRegistry=%o crud=%c";
+    const MAX_CLIA_OBJ_POG = "\$clia ObjectRegistry setObjectPrimaryOwnerGroup objectRegistry=%o group='%g'";
+    const MAX_CLIA_OBJ_PCRUD = "\$clia ObjectRegistry setObjectPrimaryOwnerCrud objectRegistry=%o crud=%c";
+    const MAX_CLIA_OBJ_GOG = "\$clia ObjectRegistry setObjectGroupOwnerGroup objectRegistry=%o group='%g'";
+    const MAX_CLIA_OBJ_GCRUD = "\$clia ObjectRegistry setObjectGroupOwnerCrud objectRegistry=%o crud=%c";
     // : End
 
     const FILE_NOT_FOUND = "ERROR: File not found: %s";
@@ -94,6 +94,7 @@ class scriptgenmax
 		"# THIS SCRIPT IS INTENDED TO BE A GENERATED SH FILE FOR RUNNING BATCH COMMANDS",
 		"#",
 		"##################################################################################",
+		"clia=/usr/local/bin/clia"
 	);
     
     private static $_funcTypes = array(
@@ -319,8 +320,9 @@ class scriptgenmax
                 $_line = preg_replace("/%goc/", $value['groupOwnerCRUD'], $_line);
                 $_line = preg_replace("/%po/", $value['primaryOwner'], $_line);
                 $_line = preg_replace("/%go/", $value['groupOwner'], $_line);
+				$_line = preg_replace("/%id/", $value['id'], $_line);
 				
-				$_pass = preg_match_all("/(?:%poc|%goc|%po|%go)/", $_line);
+				$_pass = preg_match_all("/(?:%poc|%goc|%po|%go|%id)/", $_line);
 				
                 if ($_line && !$_pass) {
                     $_script_code[] = $_line;
@@ -363,7 +365,7 @@ class scriptgenmax
                 $_line = preg_replace("/%on/", $value['ocaPrimaryOwner'], $_line);
                 $_line = preg_replace("/%gn/", $value['ocaGroupOwner'], $_line);
 				$_line = preg_replace("/%ob/", $value['objectHandle'], $_line);
-				$_line = preg_replace("/%hd/", $value['ocapHandle'], $_line);
+				$_line = preg_replace("/%hd/", "'" . $value['ocapHandle'] . "'", $_line);
 				
 				$_pass = preg_match_all("/(?:%oc|%gc|%on|%gn|%ob|%hd)/", $_line);
 				
