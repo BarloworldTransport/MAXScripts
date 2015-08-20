@@ -1,10 +1,14 @@
-SELECT dv.id AS dataView_id,
+SELECT dv.id AS id,
+dv._type AS `type`,
 dv.name AS dataViewName,
-powner.name AS PrimaryOwner,
-dv.primary_owner_crud AS PrimaryOwnerCRUD,
-gowner.name AS GroupOwner,
-dv.group_owner_crud
+objr.handle AS objectHandle,
+objr.name AS objectName,
+dv.filter,
+powner.name AS primaryOwner,
+dv.primary_owner_crud AS primaryOwnerCRUD,
+gowner.name AS groupOwner,
+dv.group_owner_crud as groupOwnerCRUD
 FROM dataview AS dv
 LEFT JOIN `group` AS powner ON (powner.id=dv.primary_owner_group_id)
 LEFT JOIN `group` AS gowner ON (gowner.id=dv.group_owner_group_id)
-LIMIT 10\G
+LEFT JOIN objectregistry AS objr ON (objr.id=dv.objectRegistry_id);

@@ -34,11 +34,15 @@ ca.sysproOrderPlacedDate,
 ca.rate_id,
 ca.truckDescription_id,
 ca.tripCaptureCompleted,
-ra.businessUnit_id as rateBU
+ra.businessUnit_id as rateBU,
+f.name as fleetOnPB
 from udo_cargo as ca
 left join udo_triplegcargo as tlc on (tlc.cargo_id=ca.id)
 left join udo_tripleg as tl on (tl.id = tlc.tripLeg_id)
 left join udo_truck as t on (t.id=tl.truck_id)
+left join udo_fleettrucklink as ftl on (ftl.truck_id=t.id)
+left join udo_fleet as f on (f.id=ftl.fleet_id)
+left join daterangevalue as drv on (drv.objectInstanceId=ftl.id)
 left join udo_productcategory as pc on (pc.id=ca.productCategory_id)
 left join udo_location as lf on (lf.id=ca.locationFrom_id)
 left join udo_location as lt on (lt.id=ca.locationTo_id)
@@ -48,4 +52,6 @@ left join udo_rates as ra on (ra.id=ca.rate_id)
 left join udo_ratetype as rt on (rt.id=ra.rateType_id)
 left join udo_driver as dr on (dr.id=tl.driver_id)
 left join udo_customer as cu on (cu.id=ca.customer_id)
-where ca.id = 823325\G
+where (drv.beginDate IS NOT NULL) AND (drv.endDate IS NULL OR drv.endDate >= DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')) AND
+ca.id = 968024
+group by ca.id\G

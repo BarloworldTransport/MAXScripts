@@ -105,17 +105,32 @@ class build_user_list_with_groups {
 
 					foreach($_users as $key1 => $value1) {
 						
+						$_personal_group_id = $value1['personal_group_id'];
 						$_query = preg_replace("/%g/", $value1['personal_group_id'], self::SQL_FETCH_GROUP_ROLE_LINKS);
 						$_result = $_db->getDataFromQuery ( $_query );
-
+						
 						if ($_result) {
+							
+							$_groups_to_discard = array();
 
 							foreach ($_result as $key2 => $value2) {
-
+								
+								$i = 0;
 								foreach ($value2 as $key3 => $value3) {
 									
-									$_users[$key1]["grl_$key2"] = $value3;
+									$_keep_group = (preg_match('/^customer\:.*/i',$value3) || preg_match('/^BU.\-.*/', $value3) || preg_match('/^orti.*email.*/i', $value3) || preg_match('/^orti.*sms.*/i', $value3) || preg_match('/^notify.*/i', $value3) || preg_match('/^maxflash.*/i', $value3) || preg_match('/^maxsms.*/i', $value3));
+									if ($_keep_group) {
+										$_users[$key1]["grl_$i"] = $value3;
+										$i++;
+									} else {
+										$_groups_to_discard[] = $value3;
+									}
 								}
+							}
+							
+							if ($_groups_to_discard) {
+								// Add discarded groups in its own column
+								$_users[$key1]['discarded_groups'] = implode(",", $_groups_to_discard);
 							}
 						}
 					}

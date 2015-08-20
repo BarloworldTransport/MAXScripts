@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 require dirname(__FILE__) . '/classes/FileParser.php';
-
+require dirname(__FILE__) . '/classes/PullDataFromMySQLQuery.php' ;
 /**
  * scriptgenmax.php
  *
@@ -41,8 +41,8 @@ class scriptgenmax
      * clia addUserToGroups email= groups=<group names comma seperated>
      */
      
-    const MAX_CLIA_DEL_USER_GROUPS = "\$clia deleteUsersMembershipFromAllGroups email=%e";
-    const MAX_CLIA_ADD_USER_TO_GROUP = "\$clia addUserToGroups email=%e groups=%g";
+    const MAX_CLIA_DEL_USER_GROUPS = "\$clia User deleteUsersMembershipFromAllGroups email=%e";
+    const MAX_CLIA_ADD_USER_TO_GROUP = "\$clia User addUserToGroups email=%e groups=\"%g\"";
         
     // : End
     // : MAX clia command to update dataview permissions using dataview id
@@ -56,6 +56,9 @@ class scriptgenmax
     const MAX_CLIA_OBJ_GOG = "\$clia ObjectRegistry setObjectGroupOwnerGroup objectRegistry=%o group='%g'";
     const MAX_CLIA_OBJ_GCRUD = "\$clia ObjectRegistry setObjectGroupOwnerCrud objectRegistry=%o crud=%c";
     // : End
+	// : MAX clia commands to update ownership and permissions for object instances
+	const MAX_CLIA_OBJ_ASSIGN_PERMISSIONS = "\$clia ObjectRegistry assignPermissions object=udo_Truck 'id=%id' primaryOwner='%po' primaryOwnerCrud='%pc' groupOwnerCrud='%gc' groupOwner='%go'";
+	// : End
 
     const FILE_NOT_FOUND = "ERROR: File not found: %s";
     
@@ -171,6 +174,7 @@ class scriptgenmax
                         $this->_file = $data['file1'];
                         
                     }
+					
                     // : End
                     
                     switch ($this->_mode) {
@@ -182,9 +186,10 @@ class scriptgenmax
                     }
                     
                     $this->_data = $this->importData();
-                    
-                    if ($this->_data) {
-                        switch (strtolower($_options['t'])) {
+                    $_type = strtolower($_options['t']);
+					
+                    if ($this->_data && $_type != 'usermembership') {
+                        switch ($_type) {
 							case "dataview": {
 								$_script = $this->generateDataViewScriptFile();	
 								break;
@@ -197,53 +202,56 @@ class scriptgenmax
 								$_script = $this->generateObjectCrudActionProcessScriptFile();
 								break;
 							}
+							
 							case "usermembership": {
 								$_script = $this->generateUserMembershipScriptFile();
 								break;
 							}
+							
 							default: {
 								$this->printUsage(self::ERROR_INVALID_ARG);
 								break;
 							}
 						}
 						
-						if (isset($_script)) {
-							//var_dump($_script);
+                    } else if ($_type == "objectinstances") {
+						$_script =$this->generateObjectInstanceChangesScript();
+					}
+					
+					if (isset($_script)) {
 							
-							if ($this->_errors) {
-								print("There were errors encountered:" . PHP_EOL);
-								var_dump($this->_errors);
-							}
-							
-							if ($this->_records) {
-								print("Summary of processed records:" . PHP_EOL);
-								var_dump($this->_records);
-							}
-							
-							if ($_script) {
-								try {
-								$_output_file = realpath(dirname(__FILE__)) . self::DS . date("Ymd_His") . "_" . $_options['t'] . ".sh";
-								$fp = fopen($_output_file, "w");
-								fwrite($fp, self::SH_HEADER . PHP_EOL);
-								
-								foreach(self::$_sh_header_comment as $_line) {
-									fwrite($fp, $_line . PHP_EOL);
-								}
-								foreach($_script as $value) {
-									fwrite($fp, $value . PHP_EOL);
-								}
-								fclose($fp);
-								
-								} catch (Exception $e) {
-									print("PHP - FATAL ERROR: Could not write generated script file:" . PHP_EOL);
-									var_dump($e->getMessage());
-								}
-								
-								print ("Successfully wrote file to location:" . $_output_file . PHP_EOL);
-							}
+						if ($this->_errors) {
+							print("There were errors encountered:" . PHP_EOL);
+							var_dump($this->_errors);
 						}
-						
-                    }
+							
+						if ($this->_records) {
+							print("Summary of processed records:" . PHP_EOL);
+							var_dump($this->_records);
+						}
+							
+						if ($_script) {
+							try {
+							$_output_file = realpath(dirname(__FILE__)) . self::DS . date("Ymd_His") . "_" . $_options['t'] . ".sh";
+							$fp = fopen($_output_file, "w");
+							fwrite($fp, self::SH_HEADER . PHP_EOL);
+								
+							foreach(self::$_sh_header_comment as $_line) {
+								fwrite($fp, $_line . PHP_EOL);
+							}
+							foreach($_script as $value) {
+								fwrite($fp, $value . PHP_EOL);
+							}
+							fclose($fp);
+								
+							} catch (Exception $e) {
+								print("PHP - FATAL ERROR: Could not write generated script file:" . PHP_EOL);
+								var_dump($e->getMessage());
+							}
+								
+							print ("Successfully wrote file to location:" . $_output_file . PHP_EOL);
+						}
+					}
                     
                 } else {
                     $this->printUsage("The correct data is not present in" . self::INI_FILE . ". Please confirm you have the following fields present: username, password, proxyip, datadir, errordir and mode");
@@ -474,21 +482,60 @@ class scriptgenmax
          */
 
         $_script_code = (array) array();
-        $_line = (string) "";
-        
+        $_lineDel = (string) "";
+		$_lineAdd = (string) "";
+
         foreach ($this->_data as $key => $value) {
-            if (array_key_exists('id', $value) && array_key_exists('primaryOwner', $value) && array_key_exists('primaryOwnerCRUD', $value) && array_key_exists('groupOwner', $value) && array_key_exists('groupOwnerCRUD', $value)) {
-                $_line = preg_replace("/%poc/", $value['primaryOwnerCRUD'],self::MAX_CLIA_DATAVIEW);
-                $_line = preg_replace("/%goc/", $value['groupOwnerCRUD'], $_line);
-                $_line = preg_replace("/%po/", $value['primaryOwner'], $_line);
-                $_line = preg_replace("/%go/", $value['groupOwner'], $_line);
-                if ($_line) {
-                    $_script_code[] = $_line;
+            if (array_key_exists('email', $value) && array_key_exists('groups', $value)) {
+                $_lineDel = preg_replace("/%e/", $value['email'],self::MAX_CLIA_DEL_USER_GROUPS);
+                $_lineAdd = preg_replace("/%e/", $value['email'], self::MAX_CLIA_ADD_USER_TO_GROUP);
+				$_lineAdd = preg_replace("/%g/", $value['groups'], $_lineAdd);
+                if ($_lineDel && $_lineAdd) {
+                    $_script_code[$key] = "$_lineDel && $_lineAdd";
                 }
             } else {
                 $this->addErrorRecord("Could not find required columns to import row data", implode(',', $value), __FUNCTION__);
             }
         }
+        if ($_script_code) {
+            return $_script_code;
+        } else {
+            return FALSE;
+        }
+    }
+	
+    /**
+     * scriptgenmax::generateObjectInstanceChangesScript($_file)
+     * Generate a script that will make changes to all existing object instance data
+     * on MAX according to the arguments supplied in this function
+     */
+    private function generateObjectInstanceChangesScript($_objectRegistry, $_id, $_primaryOwner, $_groupOwner, $_primaryOwnerCRUD = 'Create, Read, Update, Delete', $_groupOwnerCRUD = 'Read', $_file = null) {
+        /* clia command API:
+         * 	MAX_CLIA_OBJ_ASSIGN_PERMISSIONS = "\$clia ObjectRegistry assignPermissions object='%ob' 'id=%id' primaryOwner='%po' primaryOwnerCrud='%pc' groupOwnerCrud='%gc' groupOwner='%go'";
+         */
+
+        $_script_code = (array) array();
+        $_line = (string) "";
+		
+		// : Fetch objectRegistry instances on MAX DB
+		
+		
+		
+		if (array_key_exists('email', $value) && array_key_exists('groups', $value)) {
+			$_line = preg_replace("/%ob/", $value['email'], self::MAX_CLIA_OBJ_ASSIGN_PERMISSIONS);
+			$_line = preg_replace("/%g/", $value['groups'], $_line);
+			$_line = preg_replace("/%g/", $value['groups'], $_line);
+			$_line = preg_replace("/%g/", $value['groups'], $_line);
+			$_line = preg_replace("/%g/", $value['groups'], $_line);
+			$_line = preg_replace("/%g/", $value['groups'], $_line);
+			$_line = preg_replace("/%g/", $value['groups'], $_line);
+			if ($_line) {
+                    $_script_code[$key] = $_line;
+			}
+		} else {
+                $this->addErrorRecord("Could not find required columns to import row data", implode(',', $value), __FUNCTION__);
+		}
+		
         if ($_script_code) {
             return $_script_code;
         } else {
