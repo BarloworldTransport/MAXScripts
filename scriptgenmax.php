@@ -24,70 +24,100 @@ class scriptgenmax
 {
     
     // : Constants
-    const DS = DIRECTORY_SEPARATOR;
-
-    const LIVE_URL = "https://login.max.bwtsgroup.com";
-
-    const TEST_URL = "http://max.mobilize.biz";
-
-    const INI_FILE = "app_data.ini";
 	
+    const DS = DIRECTORY_SEPARATOR;
+    const LIVE_URL = "https://login.max.bwtsgroup.com";
+    const TEST_URL = "http://max.mobilize.biz";
+    const INI_FILE = "app_data.ini";
 	const SH_HEADER = "#!/bin/bash";
-
+	
+	// : Database Names
+	
+	const DB_MAX = "max2";
+	const DB_INFO_SCHEMA = "information_schema";
+	
+	// : End
+	// : SQL Queries
+	
+	const SQL_DOES_OBJECT_EXIST = "SELECT id, handle FROM objectregistry WHERE handle LIKE '%s';";
+	const SQL_DOES_TABLE_EXIST = "SELECT TABLE_NAME from TABLES WHERE TABLE_SCHEMA like '%db' AND TABLE_NAME like '%t';";
+	const SQL_GET_RECORDS_FOR_OBJECT = "SELECT id FROM %t ORDER BY id ASC;";
+	
+	// : End
     // : MAX clia command to update and delete all groups for user memberships
-    
-    /*
-     * clia deleteUsersMembershipFromAllGroups email=
-     * clia addUserToGroups email= groups=<group names comma seperated>
-     */
      
     const MAX_CLIA_DEL_USER_GROUPS = "\$clia User deleteUsersMembershipFromAllGroups email=%e";
     const MAX_CLIA_ADD_USER_TO_GROUP = "\$clia User addUserToGroups email=%e groups=\"%g\"";
         
     // : End
     // : MAX clia command to update dataview permissions using dataview id
+	
     const MAX_CLIA_DATAVIEW = "\$clia DataView setPermissionsForId dataViewId=%id primaryOwner='%po' primaryOwnerCrud=%poc groupOwner='%go' groupOwnerCrud=%goc";
+	
     // : End
     // : MAX clia commands to update permissions for objectCrudActionProcess entries
+	
     const MAX_CLIA_OBJ_PROCESS = "\$clia ObjectRegistry setProcessOwners objectRegistry=%ob handle=%hd owner='%on' ownerCrud=Create,Read,Update,Delete group='%gn' groupCrud=%gc";
-    
     const MAX_CLIA_OBJ_POG = "\$clia ObjectRegistry setObjectPrimaryOwnerGroup objectRegistry=%o group='%g'";
     const MAX_CLIA_OBJ_PCRUD = "\$clia ObjectRegistry setObjectPrimaryOwnerCrud objectRegistry=%o crud=%c";
     const MAX_CLIA_OBJ_GOG = "\$clia ObjectRegistry setObjectGroupOwnerGroup objectRegistry=%o group='%g'";
     const MAX_CLIA_OBJ_GCRUD = "\$clia ObjectRegistry setObjectGroupOwnerCrud objectRegistry=%o crud=%c";
+	
     // : End
 	// : MAX clia commands to update ownership and permissions for object instances
-	const MAX_CLIA_OBJ_ASSIGN_PERMISSIONS = "\$clia ObjectRegistry assignPermissions object=udo_Truck 'id=%id' primaryOwner='%po' primaryOwnerCrud='%pc' groupOwnerCrud='%gc' groupOwner='%go'";
-	// : End
-
-    const FILE_NOT_FOUND = "ERROR: File not found: %s";
-    
-    const ERROR_REQ_ARG_NOT_FOUND = "ERROR: The required options was not given using the -t switch. See usage below:";
 	
+	const MAX_CLIA_OBJ_ASSIGN_PERMISSIONS = "\$clia ObjectRegistry assignPermissions object=udo_Truck 'id=%id' primaryOwner='%po' primaryOwnerCrud='%pc' groupOwnerCrud='%gc' groupOwner='%go'";
+	
+	// : End
+	// : Errors
+	
+	const ERROR_P_ARG_REQUIRED = "ERROR: -t objectinstances requires -p switch to be given. See below usage of the command for objectinstances.";
+	const FILE_NOT_FOUND = "ERROR: File not found: %s";
+    const ERROR_REQ_ARG_NOT_FOUND = "ERROR: The required options was not given using the -t switch. See usage below:";
 	const ERROR_INVALID_ARG = "ERROR: The argument given for option `t` is invalid. Please see below:";
-    
-    const ERROR_NO_ARG_GIVEN = "ERROR: You did not provide any options using switches and the -t switch options is required. See usage below:";
+	const ERROR_NO_ARG_GIVEN = "ERROR: You did not provide any options using switches and the -t switch options is required. See usage below:";
+	
+	// : End
+	
     // : End
     
     // : Variables:
     private static $_usage = array(
-        "scriptgenmax.php - A script that generates clia calls to update batch records on MAX.",
+        "SCRIPTGENMAX - A script that generates clia commands to update batch records on MAX.",
         "",
-        "Usage: scriptgenmax.php -t \$function -f filename",
+        "Usage: scriptgenmax.php -t {function} -f {filename} -p {primaryOwnerGroup,primaryOwnerCRUD,groupOwnerGroup,groupOwnerCRUD}",
         "",
         "Arguments:",
         "",
         "Required options:",
-        "-t: objectRegistry can be 1 of the following {dataview|objectregistry|objectcrudprocessaction|usermembership}",
+        "-t: objectRegistry can be 1 of the following {dataview|objectregistry|objectcrudprocessaction|usermembership|objectinstances}",
         "",
+		"-p: only required if using -t objectinstances option",
+		"primaryOwnerGroup = primary owner group on MAX (group must exist)",
+		"primaryOwnerCRUD = CRUD (C: Create, R: Read, U: Update, D: Delete) - If not specified default value: CRUD",
+		"groupOwnerGroup = group owner group on MAX (group must exist)",
+		"groupOwnerCRUD = CRUD (C: Create, R: Read, U: Update, D: Delete) - If not specified default value: R",
+		"",
         "Optional options:",
         "-f: csv filename to be used to generate clia commands. The path for this file is specified in app_data.ini config file",
         "",
         "Example:",
         "",
+		"Build dataview ownership and permission changes based on csv file data:",
         "scriptgenmax.php -t dataview -f dataview_permissions.csv",
         "",
-        "NOTE: If file is not provided in the -f switch then it will be fetched from the ./config/app_data.ini file."
+		"Build clia commands, exported into a .sh file, to change ownership and permissions for all object instance records for",
+		"the object given.",
+		"",
+        "PLEASE NOTE:",
+		"",
+		"If file is not provided in the -f switch then it will be fetched from the ./config/app_data.ini file.",
+		"",
+		"If primaryOwnerCRUD and/or groupOwnerCRUD not specified for -p switch, the following defaults are used:",
+		"",
+		"primaryOwnerCRUD: CRUD",
+		"",
+		"groupOwnerCRUD: R"
     );
 	
 	private static $_sh_header_comment = array(
@@ -130,6 +160,10 @@ class scriptgenmax
     protected $_tmp;
 
     protected $_file;
+	
+	protected $_dbmax;
+	
+	protected $_dbinfoschema;
     // : End
     
     // : Magic Functions
@@ -139,7 +173,7 @@ class scriptgenmax
      */
     public function __construct()
     {
-        $_options = getopt("t:f");
+        $_options = getopt("t:f:p:o:");
         
         if (count($_options) > 0) {
             
@@ -162,7 +196,7 @@ class scriptgenmax
                     $this->_errdir = $data["errordir"];
                     
                     // : If file option is passed at command line using the -f switch the use the supplied filename else use file in app_data.ini config file
-                    if (array_key_exists('f', $_options)) {
+					if (array_key_exists('f', $_options) && !array_key_exists('p', $_options)) {
                         
                         if (is_string($_options["f"])) {
                             
@@ -188,7 +222,7 @@ class scriptgenmax
                     $this->_data = $this->importData();
                     $_type = strtolower($_options['t']);
 					
-                    if ($this->_data && $_type != 'usermembership') {
+                    if ($this->_data && $_type != 'objectinstances') {
                         switch ($_type) {
 							case "dataview": {
 								$_script = $this->generateDataViewScriptFile();	
@@ -215,7 +249,91 @@ class scriptgenmax
 						}
 						
                     } else if ($_type == "objectinstances") {
-						$_script =$this->generateObjectInstanceChangesScript();
+						
+						if (array_key_exists('p', $_options) && array_key_exists('o', $_options)) {
+							
+						$_poptions = explode(',', $_options['p']);
+						$_objectregistry = ($_options['o']);
+						
+						if ($_poptions && is_array($_poptions) && $_objectregistry) {
+							
+							$_primaryOwner = strtolower($_poptions[0]);
+							$_primaryOwnerCRUD = strtolower($_poptions[1]);
+							$_groupOwner = strtolower($_poptions[2]);
+							$_groupOwnerCRUD = strtolower($_poptions[3]);
+							
+							$_perms = (array) array();
+							
+							$_perms['primaryOwner'] = $_primaryOwner;
+							$_perms['groupOwner'] = $_groupOwner;
+							
+							$po_count = count($_primaryOwnerCRUD);
+							$go_count = count($_groupOwnerCRUD);
+							
+							$_permStr = (string) "";
+							foreach ($_perms as $key1 => $value1) {
+								if ($value1 && (count($value1) <= 4)) {
+									$_count = count($value1);
+									$value2 = "";
+									
+									for ($i = 0; $i < $_count; $i++) {
+										switch ($value1[$i]) {
+											case "c" :
+												$value2 = "Create";
+												break;
+											case "r" :
+												$value2 = "Read";
+												break;
+											case "u" :
+												$value2 = "Update";
+												break;
+											case "d" :
+												$value2 = "Delete";
+												break;
+										}
+										if ($_permStr) {
+											$_permStr .= $value2;
+										} else {
+											$_permStr = $value2;
+										}
+										if ($i < ($_count - 1)) {
+											$_permStr .= ",";
+										}
+									}
+									if ($_permStr) {
+										switch ($key1) {
+											case 'primaryOwner' :
+												$_primaryOwnerCRUD = $_permStr;
+												break;
+											case 'groupOwner' :
+												$_groupOwnerCRUD = $_permStr;
+												break;
+										}
+									}
+								}
+							}
+							
+							$this->_dbmax = new PullDataFromMySQLQuery(self::DB_MAX);
+							$this->_dbinfoschema = new PullDataFromMySQLQuery(self::DB_INFO_SCHEMA);
+						
+							if (!$this->_dbmax->getErrors() && !$this->_dbinfoschema->getErrors()) {
+							
+								// If the connection to database succeeds then run function
+								$_script = $this->generateObjectInstanceChangesScript($_objectregistry, $_primaryOwner, $_groupOwner, $_primaryOwnerCRUD, $_groupOwnerCRUD);
+							
+							} else {
+							
+								// If there are errors encountered during the connection to the database then exit with error
+								system('clear');
+								print("Something went wrong. Failed to connect to the MAX and/or information_schema database. Please check PullDataFromMySQLQuery.php for config file and settings." . PHP_EOL);
+							}
+						}
+						
+						
+						} else {
+							print(self::ERROR_P_ARG_REQUIRED . PHP_EOL);
+							$this->printUsage();
+						}
 					}
 					
 					if (isset($_script)) {
@@ -509,31 +627,81 @@ class scriptgenmax
      * Generate a script that will make changes to all existing object instance data
      * on MAX according to the arguments supplied in this function
      */
-    private function generateObjectInstanceChangesScript($_objectRegistry, $_id, $_primaryOwner, $_groupOwner, $_primaryOwnerCRUD = 'Create, Read, Update, Delete', $_groupOwnerCRUD = 'Read', $_file = null) {
+    private function generateObjectInstanceChangesScript($_objectRegistry, $_primaryOwner, $_groupOwner, $_primaryOwnerCRUD = 'Create,Read,Update,Delete', $_groupOwnerCRUD = 'Read', $_file = null) {
         /* clia command API:
          * 	MAX_CLIA_OBJ_ASSIGN_PERMISSIONS = "\$clia ObjectRegistry assignPermissions object='%ob' 'id=%id' primaryOwner='%po' primaryOwnerCrud='%pc' groupOwnerCrud='%gc' groupOwner='%go'";
          */
 
         $_script_code = (array) array();
         $_line = (string) "";
+		$_table = strtolower($_objectRegistry);
 		
 		// : Fetch objectRegistry instances on MAX DB
 		
+		// Build SQL queries
+		$_query1 = preg_replace("/%s/", $_table, self::SQL_DOES_OBJECT_EXIST);
+		$_query2 = preg_replace("/%db/", self::DB_MAX, self::SQL_DOES_TABLE_EXIST);
+		$_query2 = preg_replace("/%t/", $_table, $_query2);
+		$_query3 = preg_replace("/%t/", $_table, self::SQL_GET_RECORDS_FOR_OBJECT);
 		
+		// Do check for object in objectregistry table
+		$_objExist = false;
+		$_result = $this->_dbmax->getDataFromQuery($_query1);
+		if ($_result) {
+			if (array_key_exists(0, $_result)) {
+				if ($_result[0]['id']) {
+					$_objExist = true;
+				}
+			}
+		}
 		
-		if (array_key_exists('email', $value) && array_key_exists('groups', $value)) {
-			$_line = preg_replace("/%ob/", $value['email'], self::MAX_CLIA_OBJ_ASSIGN_PERMISSIONS);
-			$_line = preg_replace("/%g/", $value['groups'], $_line);
-			$_line = preg_replace("/%g/", $value['groups'], $_line);
-			$_line = preg_replace("/%g/", $value['groups'], $_line);
-			$_line = preg_replace("/%g/", $value['groups'], $_line);
-			$_line = preg_replace("/%g/", $value['groups'], $_line);
-			$_line = preg_replace("/%g/", $value['groups'], $_line);
-			if ($_line) {
-                    $_script_code[$key] = $_line;
+		// Do check for table in DB
+		$_result = $this->_dbinfoschema->getDataFromQuery($_query2);
+		$_tblExist = false;
+		
+		if ($_result) {
+			if (array_key_exists(0, $_result)) {
+				if ($_result[0]['TABLE_NAME']) {
+					$_tblExist = true;
+				}
+			}
+		}
+		
+		// Fetch records for object
+		 $_result = $this->_dbmax->getDataFromQuery($_query3);
+		 
+		$_data = (array) array();
+		if ($_result && $_tblExist) {
+			foreach($_result as $key1 => $value1) {
+				if (is_array($value1) && $value1) {
+					foreach($value1 as $key2 => $value2) {
+						if ($value2) {
+							$_data[$key1][$key2] = $value2;
+						}
+					}
+				}
+			}
+		}
+		
+		// : End
+		
+		if ($_data) {
+			foreach ($_data as $key1 => $value1) {
+				$_line = preg_replace("/%ob/", $_objectRegistry, self::MAX_CLIA_OBJ_ASSIGN_PERMISSIONS);
+				$_line = preg_replace("/%id/", $value1['id'], $_line);
+				$_line = preg_replace("/%po/", $_primaryOwner, $_line);
+				$_line = preg_replace("/%pc/", $_primaryOwnerCRUD, $_line);
+				$_line = preg_replace("/%go/", $_groupOwner, $_line);
+				$_line = preg_replace("/%gc/", $_groupOwnerCRUD, $_line);
+				
+				if ($_line) {
+						$_script_code[$key1] = $_line;
+				}
 			}
 		} else {
-                $this->addErrorRecord("Could not find required columns to import row data", implode(',', $value), __FUNCTION__);
+				var_dump($_query2);
+				exit;
+                $this->addErrorRecord("ERROR: No data for object: $_objectRegistry was found. using query: $_query3 for function: " . __FUNCTION__);
 		}
 		
         if ($_script_code) {
