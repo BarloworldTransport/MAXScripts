@@ -34,7 +34,7 @@ class build_user_list_with_groups {
 	
 	const CONFIG_FILE = "app_data.ini";
 	
-	const SQL_FETCH_GROUP_ROLE_LINKS = 'SELECT gp.name FROM group_role_link AS grl LEFT JOIN `group` AS gp ON (gp.id=grl.group_id) WHERE grl.played_by_group_id=%g;';
+	const SQL_FETCH_GROUP_ROLE_LINKS = 'SELECT gp.name FROM group_role_link AS grl LEFT JOIN `group` AS gp ON (gp.id=grl.group_id) WHERE grl.played_by_group_id=%g AND grl.group_id != %h;';
 	
 	const SQL_FETCH_USERS = 'SELECT CONCAT(p.first_name, " ", p.last_name) AS fullName, p.email, pu.personal_group_id FROM permissionuser AS pu LEFT JOIN person AS p ON (p.id=pu.person_id) WHERE pu.status = 1;';
 	
@@ -107,34 +107,44 @@ class build_user_list_with_groups {
 						
 						$_personal_group_id = $value1['personal_group_id'];
 						$_query = preg_replace("/%g/", $value1['personal_group_id'], self::SQL_FETCH_GROUP_ROLE_LINKS);
+						$_query = preg_replace("/%h/", $value1['personal_group_id'], $_query);
 						$_result = $_db->getDataFromQuery ( $_query );
 						
 						if ($_result) {
 							
 							$_groups_to_discard = array();
-
+							$_groups_to_keep = array();
+							
+							$i = 0;
 							foreach ($_result as $key2 => $value2) {
 								
-								$i = 0;
-								foreach ($value2 as $key3 => $value3) {
+								
+								foreach ($value2 as $value3) {
 									
 									$_keep_group = (preg_match('/^customer\:.*/i',$value3) || preg_match('/^BU.\-.*/', $value3) || preg_match('/^orti.*email.*/i', $value3) || preg_match('/^orti.*sms.*/i', $value3) || preg_match('/^notify.*/i', $value3) || preg_match('/^maxflash.*/i', $value3) || preg_match('/^maxsms.*/i', $value3));
 									if ($_keep_group) {
-										$_users[$key1]["grl_$i"] = $value3;
-										$i++;
+										$_groups_to_keep[] = $value3;
 									} else {
 										$_groups_to_discard[] = $value3;
 									}
 								}
+								$i++;
 							}
 							
 							if ($_groups_to_discard) {
 								// Add discarded groups in its own column
 								$_users[$key1]['discarded_groups'] = implode(",", $_groups_to_discard);
 							}
+							
+							if ($_groups_to_keep) {
+								// Implode array into string and store into single array entry
+								$_users[$key1]['groups'] = implode(",", $_groups_to_keep);
+							}
 						}
 					}
 			}
+			
+			var_dump($_users);
 			// : End
 			
 			// Close database connection

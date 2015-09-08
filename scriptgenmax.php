@@ -66,7 +66,7 @@ class scriptgenmax
     // : End
 	// : MAX clia commands to update ownership and permissions for object instances
 	
-	const MAX_CLIA_OBJ_ASSIGN_PERMISSIONS = "\$clia ObjectRegistry assignPermissions object=udo_Truck 'id=%id' primaryOwner='%po' primaryOwnerCrud='%pc' groupOwnerCrud='%gc' groupOwner='%go'";
+	const MAX_CLIA_OBJ_ASSIGN_PERMISSIONS = "\$clia ObjectRegistry assignPermissions object=%ob 'id=%id' primaryOwner='%po' primaryOwnerCrud='%pc' groupOwnerCrud='%gc' groupOwner='%go'";
 	
 	// : End
 	// : Errors
@@ -85,7 +85,7 @@ class scriptgenmax
     private static $_usage = array(
         "SCRIPTGENMAX - A script that generates clia commands to update batch records on MAX.",
         "",
-        "Usage: scriptgenmax.php -t {function} -f {filename} -p {primaryOwnerGroup,primaryOwnerCRUD,groupOwnerGroup,groupOwnerCRUD}",
+        "Usage: scriptgenmax.php -t {function} -f {filename} -p {primaryOwnerGroup,primaryOwnerCRUD,groupOwnerGroup,groupOwnerCRUD} -o {object}",
         "",
         "Arguments:",
         "",
@@ -98,6 +98,10 @@ class scriptgenmax
 		"groupOwnerGroup = group owner group on MAX (group must exist)",
 		"groupOwnerCRUD = CRUD (C: Create, R: Read, U: Update, D: Delete) - If not specified default value: R",
 		"",
+		"",
+		"-o: only required if using -t objectinstances option",
+		"o = objectName",
+		"",
         "Optional options:",
         "-f: csv filename to be used to generate clia commands. The path for this file is specified in app_data.ini config file",
         "",
@@ -109,6 +113,8 @@ class scriptgenmax
 		"Build clia commands, exported into a .sh file, to change ownership and permissions for all object instance records for",
 		"the object given.",
 		"",
+		"scriptgenmax.php -t objectinstances -p \"Admin,CRUD,All Users,R\" -o udo_refuel",
+		"",
         "PLEASE NOTE:",
 		"",
 		"If file is not provided in the -f switch then it will be fetched from the ./config/app_data.ini file.",
@@ -118,7 +124,7 @@ class scriptgenmax
 		"primaryOwnerCRUD: CRUD",
 		"",
 		"groupOwnerCRUD: R"
-    );
+	);
 	
 	private static $_sh_header_comment = array(
 		"##################################################################################",
@@ -255,26 +261,30 @@ class scriptgenmax
 						$_poptions = explode(',', $_options['p']);
 						$_objectregistry = ($_options['o']);
 						
-						if ($_poptions && is_array($_poptions) && $_objectregistry) {
+						if ($_poptions && is_array($_poptions) && $_objectregistry) { 
 							
-							$_primaryOwner = strtolower($_poptions[0]);
+							// Store owners
+							$_primaryOwner = $_poptions[0];
+							$_groupOwner = $_poptions[2];
+							
+							// Store permissions
 							$_primaryOwnerCRUD = strtolower($_poptions[1]);
-							$_groupOwner = strtolower($_poptions[2]);
 							$_groupOwnerCRUD = strtolower($_poptions[3]);
 							
 							$_perms = (array) array();
 							
-							$_perms['primaryOwner'] = $_primaryOwner;
-							$_perms['groupOwner'] = $_groupOwner;
+							$_perms['primaryOwner'] = $_primaryOwnerCRUD;
+							$_perms['groupOwner'] = $_groupOwnerCRUD;
 							
 							$po_count = count($_primaryOwnerCRUD);
 							$go_count = count($_groupOwnerCRUD);
 							
-							$_permStr = (string) "";
 							foreach ($_perms as $key1 => $value1) {
-								if ($value1 && (count($value1) <= 4)) {
-									$_count = count($value1);
+								
+								if ((count($value1) <= 4)) {
+									$_count = strlen($value1);
 									$value2 = "";
+									$_permStr = "";
 									
 									for ($i = 0; $i < $_count; $i++) {
 										switch ($value1[$i]) {
@@ -300,6 +310,7 @@ class scriptgenmax
 											$_permStr .= ",";
 										}
 									}
+									
 									if ($_permStr) {
 										switch ($key1) {
 											case 'primaryOwner' :
