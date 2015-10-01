@@ -41,7 +41,7 @@ class scriptgenmax
 	
 	const SQL_DOES_OBJECT_EXIST = "SELECT id, handle FROM objectregistry WHERE handle LIKE '%s';";
 	const SQL_DOES_TABLE_EXIST = "SELECT TABLE_NAME from TABLES WHERE TABLE_SCHEMA like '%db' AND TABLE_NAME like '%t';";
-	const SQL_GET_RECORDS_FOR_OBJECT = "SELECT id FROM %t ORDER BY id DESC;";
+	const SQL_GET_RECORDS_FOR_OBJECT = "SELECT id FROM %t%s ORDER BY id DESC;";
 	const SQL_GET_GROUP_FOR_OBJECT = "SELECT id FROM `group` WHERE name like '%s' LIMIT 1;";
 	const SQL_GET_PERSONAL_GROUP = "SELECT g.name FROM permissionuser AS pu LEFT JOIN `group` AS g ON (g.id=pu.personal_group_id) WHERE pu.id=%d;";
 	const SQL_GET_PERMISSION_USER = "SELECT pu.id FROM person AS p LEFT JOIN permissionuser AS pu ON (pu.person_id=p.id) WHERE p.id=%d;";
@@ -696,9 +696,27 @@ class scriptgenmax
 		}
 		
 		// Fetch records for object
-		$_result = $this->_dbmax->getDataFromQuery($_query3);
-		 
+		//
+		$_where = (string) "";
+		$_query_x = (string) "";
 		$_data = (array) array();
+
+		switch ($_objectRegistry) {
+		case "permissionuser":
+			$_where = " WHERE status != 'Disabled'";
+			$_query_x = preg_replace('/%s/', $_where, self::SQL_GET_RECORDS_FOR_OBJECT);
+			$_query_x = preg_replace('/%t/', $_table, $_query_x);
+			break;
+		case "person":
+			$_query_x = "SELECT p.id FROM permissionuser AS pu LEFT JOIN person AS p ON (p.id=pu.person_id) WHERE pu.status != 'Disabled' ORDER BY ID DESC;";
+			break;
+		default:
+			$_query_x = preg_replace('/%s/', '', $_query3);
+			break;
+		}
+		
+		$_result = $this->_dbmax->getDataFromQuery($_query_x);
+		
 		if ($_result && $_tblExist) {
 			foreach($_result as $key1 => $value1) {
 				if (is_array($value1) && $value1) {
