@@ -17,7 +17,7 @@ ra.model as contributionModel,
 bu.name as businessUnit,
 fvl.name as fleetValue,
 drvFC.value as fuelConsumption
-INTO OUTFILE '/tmp/hillside_rates.csv'
+INTO OUTFILE '/tmp/corrobrick-avoca.csv'
 FIELDS TERMINATED BY ','
 OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
@@ -39,5 +39,5 @@ left join daterangevalue as drvDPM on (drvDPM.objectInstanceId=ra.id and drvDPM.
 left join daterangevalue as drvFV on (drvFV.objectInstanceId=ra.id and drvFV.type="Fleet" and drvRate.endDate IS NULL)
 left join daterangevalue as drvFC on (drvFC.objectInstanceId=ra.id and drvFC.type="FuelConsumptionForRoute" and drvRate.endDate IS NULL)
 left join udo_fleet as fvl on (fvl.id=drvFV.value)
-where ra.enabled=1 and cu.active = 1 and cu.primaryCustomer = 1 and cu.useFandVContract = 0 and cu.tradingName IN ("Hillside Aluminium Ltd") group by ra.id order by cu.tradingName;
+where ra.enabled=1 and cu.active = 1 and cu.primaryCustomer = 1 and cu.useFandVContract = 0 and cu.tradingName IN ("CORROBRIK-AVOCA") group by ra.id order by cu.tradingName;
 

@@ -41,7 +41,10 @@ class scriptgenmax
 	
 	const SQL_DOES_OBJECT_EXIST = "SELECT id, handle FROM objectregistry WHERE handle LIKE '%s';";
 	const SQL_DOES_TABLE_EXIST = "SELECT TABLE_NAME from TABLES WHERE TABLE_SCHEMA like '%db' AND TABLE_NAME like '%t';";
-	const SQL_GET_RECORDS_FOR_OBJECT = "SELECT id FROM %t ORDER BY id ASC;";
+	const SQL_GET_RECORDS_FOR_OBJECT = "SELECT id FROM %t ORDER BY id DESC;";
+	const SQL_GET_GROUP_FOR_OBJECT = "SELECT id FROM `group` WHERE name like '%s' LIMIT 1;";
+	const SQL_GET_PERSONAL_GROUP = "SELECT g.name FROM permissionuser AS pu LEFT JOIN `group` AS g ON (g.id=pu.personal_group_id) WHERE pu.id=%d;";
+	const SQL_GET_PERMISSION_USER = "SELECT pu.id FROM person AS p LEFT JOIN permissionuser AS pu ON (pu.person_id=p.id) WHERE p.id=%d;";
 	
 	// : End
     // : MAX clia command to update and delete all groups for user memberships
@@ -66,7 +69,7 @@ class scriptgenmax
     // : End
 	// : MAX clia commands to update ownership and permissions for object instances
 	
-	const MAX_CLIA_OBJ_ASSIGN_PERMISSIONS = "\$clia ObjectRegistry assignPermissions object=udo_Truck 'id=%id' primaryOwner='%po' primaryOwnerCrud='%pc' groupOwnerCrud='%gc' groupOwner='%go'";
+	const MAX_CLIA_OBJ_ASSIGN_PERMISSIONS = "\$clia ObjectRegistry assignPermissions object=%ob 'id=%id' primaryOwner='%po' primaryOwnerCrud='%pc' groupOwnerCrud='%gc' groupOwner='%go'";
 	
 	// : End
 	// : Errors
@@ -164,8 +167,49 @@ class scriptgenmax
 	protected $_dbmax;
 	
 	protected $_dbinfoschema;
-    // : End
-    
+	// : End
+	
+    /**
+     * scriptgenmax::unabbreviateCRUD($_crudStr)
+     * convert abbreviated crud string to full unabbreviated version of the string
+	 * i.e. crud = Create, Read, Update, Delete
+	 *
+	 * @param string: $_crudStr
+	 * @return mixed
+     */
+	public function unabbreviateCRUD($_crudStr) {
+			if (is_string($_crudStr) && $_crudStr) {
+			$_crudStr = strtolower($_crudStr);
+			$_result = (array) array();
+			$_count = strlen($_crudStr);
+			$_crudResult = False;
+
+			for ($x = 0; $x < $_count; $x++) {
+				switch ($_crudStr[$x]) {
+					case 'c':
+						$_result[] = 'Create';
+						break;
+					case 'r':
+						$_result[] = 'Read';
+						break;
+					case 'u':
+						$_result[] = 'Update';
+						break;
+					case 'd':
+						$_result[] = 'Delete';
+						break;
+				}
+			}
+
+			if ($_result) {
+				$_crudResult = implode(',', $_result);
+			}
+
+		    // Return result	
+			return $_crudResult;
+		}
+	}
+
     // : Magic Functions
     /**
      * scriptgenmax::__construct()
@@ -272,35 +316,17 @@ class scriptgenmax
 							
 							$_permStr = (string) "";
 							foreach ($_perms as $key1 => $value1) {
-								if ($value1 && (count($value1) <= 4)) {
-									$_count = count($value1);
-									$value2 = "";
-									
-									for ($i = 0; $i < $_count; $i++) {
-										switch ($value1[$i]) {
-											case "c" :
-												$value2 = "Create";
-												break;
-											case "r" :
-												$value2 = "Read";
-												break;
-											case "u" :
-												$value2 = "Update";
-												break;
-											case "d" :
-												$value2 = "Delete";
-												break;
-										}
-										if ($_permStr) {
-											$_permStr .= $value2;
-										} else {
-											$_permStr = $value2;
-										}
-										if ($i < ($_count - 1)) {
-											$_permStr .= ",";
-										}
+									if ($key1 == 'primaryOwner')
+									{
+										$value2 =& $_primaryOwnerCRUD;
+									} else
+									{
+										$value2 =& $_groupOwnerCRUD;
 									}
+
+									$_permStr = $this->unabbreviateCRUD($value2);
 									if ($_permStr) {
+
 										switch ($key1) {
 											case 'primaryOwner' :
 												$_primaryOwnerCRUD = $_permStr;
@@ -310,7 +336,6 @@ class scriptgenmax
 												break;
 										}
 									}
-								}
 							}
 							
 							$this->_dbmax = new PullDataFromMySQLQuery(self::DB_MAX);
@@ -625,7 +650,9 @@ class scriptgenmax
     /**
      * scriptgenmax::generateObjectInstanceChangesScript($_file)
      * Generate a script that will make changes to all existing object instance data
-     * on MAX according to the arguments supplied in this function
+	 * on MAX according to the arguments supplied in this function
+	 * SQL_GET_PERSONAL_GROUP
+	 * SQL_GET_PERMISSION_USER
      */
     private function generateObjectInstanceChangesScript($_objectRegistry, $_primaryOwner, $_groupOwner, $_primaryOwnerCRUD = 'Create,Read,Update,Delete', $_groupOwnerCRUD = 'Read', $_file = null) {
         /* clia command API:
@@ -639,6 +666,7 @@ class scriptgenmax
 		// : Fetch objectRegistry instances on MAX DB
 		
 		// Build SQL queries
+		// SQL_GET_GROUP_FOR_OBJECT
 		$_query1 = preg_replace("/%s/", $_table, self::SQL_DOES_OBJECT_EXIST);
 		$_query2 = preg_replace("/%db/", self::DB_MAX, self::SQL_DOES_TABLE_EXIST);
 		$_query2 = preg_replace("/%t/", $_table, $_query2);
@@ -668,7 +696,7 @@ class scriptgenmax
 		}
 		
 		// Fetch records for object
-		 $_result = $this->_dbmax->getDataFromQuery($_query3);
+		$_result = $this->_dbmax->getDataFromQuery($_query3);
 		 
 		$_data = (array) array();
 		if ($_result && $_tblExist) {
@@ -686,16 +714,58 @@ class scriptgenmax
 		// : End
 		
 		if ($_data) {
-			foreach ($_data as $key1 => $value1) {
-				$_line = preg_replace("/%ob/", $_objectRegistry, self::MAX_CLIA_OBJ_ASSIGN_PERMISSIONS);
-				$_line = preg_replace("/%id/", $value1['id'], $_line);
-				$_line = preg_replace("/%po/", $_primaryOwner, $_line);
-				$_line = preg_replace("/%pc/", $_primaryOwnerCRUD, $_line);
-				$_line = preg_replace("/%go/", $_groupOwner, $_line);
-				$_line = preg_replace("/%gc/", $_groupOwnerCRUD, $_line);
+				foreach ($_data as $key1 => $value1) {
+				$_pu_id = (int) 0;
+				$_pg_name = (string) "";
+				$_primaryOwnerFinal = ucwords($_primaryOwner);
+				$_groupOwnerFinal = ucwords($_groupOwner);
+				$objrname = strtolower($_objectRegistry);
 				
-				if ($_line) {
-						$_script_code[$key1] = $_line;
+				if (($_primaryOwner == "0" || $_groupOwner == "0") && ($objrname == "permissionuser" || $objrname == "person")) {
+						
+					if ($objrname == "person") {
+
+						$_query_x = preg_replace("/%d/", $value1['id'], self::SQL_GET_PERMISSION_USER);
+						$_result = $this->_dbmax->getDataFromQuery($_query_x);
+						
+						if ($_result) {
+							$_pu_id = $_result[0]['id'];
+						}
+					} else if ($objrname == "permissionuser") {
+						$_pu_id = $value1['id'];
+					}
+					
+					if ($_pu_id) {
+						$_query_x = preg_replace("/%d/", $_pu_id, self::SQL_GET_PERSONAL_GROUP);
+						$_result = $this->_dbmax->getDataFromQuery($_query_x);
+								
+						if ($_result) {
+							$_pg_name = ucwords($_result[0]['name']);
+						} 
+					}
+
+					if ($_pg_name) {
+						$_pg_name = preg_replace("/\'/", "\'", $_pg_name);
+
+						if ($_primaryOwner == "0") {
+							$_primaryOwnerFinal = $_pg_name;
+						} else {
+							$_groupOwnerFinal = $_pg_name;
+						}
+					}
+				}
+				if ($_primaryOwnerFinal != '0' && $_groupOwnerFinal != '0') {
+
+					$_line = preg_replace("/%ob/", $_objectRegistry, self::MAX_CLIA_OBJ_ASSIGN_PERMISSIONS);
+					$_line = preg_replace("/%id/", $value1['id'], $_line);
+					$_line = preg_replace("/%po/", $_primaryOwnerFinal, $_line);
+					$_line = preg_replace("/%pc/", $_primaryOwnerCRUD, $_line);
+					$_line = preg_replace("/%go/", $_groupOwnerFinal, $_line);
+					$_line = preg_replace("/%gc/", $_groupOwnerCRUD, $_line);
+				
+					if ($_line) {
+							$_script_code[$key1] = $_line;
+					}
 				}
 			}
 		} else {

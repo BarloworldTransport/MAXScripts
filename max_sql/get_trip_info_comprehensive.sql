@@ -53,5 +53,5 @@ left join udo_ratetype as rt on (rt.id=ra.rateType_id)
 left join udo_driver as dr on (dr.id=tl.driver_id)
 left join udo_customer as cu on (cu.id=ca.customer_id)
 where (drv.beginDate IS NOT NULL) AND (drv.endDate IS NULL OR drv.endDate >= DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')) AND
-ca.id = 968024
-group by ca.id\G
+ca.id = 991239
+group by ca.id;
