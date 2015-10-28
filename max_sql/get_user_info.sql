@@ -1,4 +1,4 @@
-SET @email="meryle@manlinegroup.com";
+SET @email="tpeters@manlinegroup.com";
 SELECT CONCAT(p.first_name, " ", p.last_name) as contactName,
 f.name as defaultFleet,
 p.email,

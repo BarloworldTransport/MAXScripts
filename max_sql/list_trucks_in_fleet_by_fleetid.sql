@@ -1,2 +1,2 @@
-select t.fleetnum from udo_fleettrucklink as ftl left join udo_fleet as f on (f.id=ftl.fleet_id) left join udo_truck as t on (t.id=ftl.truck_id) where ftl.fleet_id=22;
+select f.name, drv.beginDate, drv.endDate, CONCAT(p.first_name, ' ', p.last_name) as last_modified_by, drv.time_last_modified from udo_fleettrucklink as ftl left join daterangevalue as drv on (drv.objectInstanceId=ftl.id and drv.type="FleetTruckLink") left join person as p on (p.id=drv.last_modified_by) left join udo_fleet as f on (f.id=ftl.fleet_id) left join udo_truck as t on (t.id=ftl.truck_id) where t.fleetnum="E45";
 
