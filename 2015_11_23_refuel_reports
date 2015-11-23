@@ -1,0 +1,12 @@
+# Refuel Report by Fleet -> suggested change to filter
+clia DataView setFilter objectRegistry=403 type=ItemListDataView name="Refuel Report (by fleet)" filter="udo_refuel.truck_id = @InterimResult:truck_id AND udo_refuel.fillDateTime >= @InterimResult:beginDate AND udo_refuel.fillDateTime <= @InterimResult:endDate AND udo_refuel.driver_id = @Parameter:driver AND (udo_refuel.authorized = \"Unauthorized\" OR udo_refuel.point_id = @Parameter:refuelPoint)"
+
+# Refuel Report by Truck -> suggested change to filter
+clia DataView setFilter objectRegistry=403 type=ItemListDataView name="Refuel Report (by fleet)" filter="(authorized = \"Unauthorized\" OR point_id = @Parameter:refuelPoint) AND fillDateTime >= @Parameter:startDate AND fillDateTime <= @Parameter:stopDate AND driver_id = @Parameter:driver AND truck_id = @Parameter:truck"
+
+# Refuel Report by Truck -> current filter
+clia DataView setFilter objectRegistry=403 type=ItemListDataView name="Refuel Report (by fleet)" filter="udo_refuel.truck_id = @InterimResult:truck_id AND udo_refuel.time_created >= @InterimResult:beginDate AND udo_refuel.time_created <= @InterimResult:endDate AND udo_refuel.driver_id = @Parameter:driver AND (authorized = "Unauthorized" OR point_id = @Parameter:refuelPoint)"
+
+# Refuel Report by Truck -> current filter
+clia DataView setFilter objectRegistry=403 type=ItemListDataView name="Refuel Report (by fleet)" filter="(authorized = "Unauthorized" OR point_id = @Parameter:refuelPoint) AND time_created >= @Parameter:startDate AND time_created <= @Parameter:stopDate AND driver_id = @Parameter:driver AND truck_id = @Parameter:truck"
+
