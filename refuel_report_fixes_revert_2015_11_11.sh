@@ -1,0 +1,6 @@
+#!/bin/bash
+clia=/usr/local/bin/clia
+$clia DataView setFilter objectRegistry=udo_Refuel type=ItemListDataView name="Refuel Report (by truck)" filter="point_id = @Parameter:refuelPoint AND time_created >= @Parameter:startDate AND time_created <= @Parameter:stopDate AND driver_id = @Parameter:driver AND truck_id = @Parameter:truck"
+$clia DataView setFilter objectRegistry=udo_Refuel type=ItemListDataView name="Refuel Report (by fleet)" filter="udo_refuel.truck_id = @InterimResult:truck_id AND udo_refuel.time_created >= @InterimResult:beginDate AND udo_refuel.time_created <= @InterimResult:endDate AND udo_refuel.driver_id = @Parameter:driver AND udo_refuel.point_id = @Parameter:refuelPoint"
+$clia DataView setFilter objectRegistry=udo_Refuel type=ItemListDataView name="Unauthorized Refuels" filter="udo_refuel.truck_id = @InterimResult:truck_id AND 4977 >= @Parameter:startDate AND 4977 <= @Parameter:stopDate AND point_id = \"0\""
+$clia DataView setFilter objectRegistry=udo_Refuel type=ItemListDataView name="Open Refuels" filter="truck_id = @InterimResult:truck_id AND time_created >= @InterimResult:beginDate AND time_created <= @InterimResult:endDate AND point_id != null AND odo = null AND litres = null AND cost = null AND full_or_Partial = null"
