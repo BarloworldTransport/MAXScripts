@@ -1,0 +1,55 @@
+# Pseudo code: MAX_MMS_Order.php
+
+Main Features:
+- Generate MMS XML file
+- Upload XML file to MAX
+- Offer all options with performing both of the above
+
+Purpose:
+- Used to generate test MMS XML files
+- Upload test XML files
+- One class to handle everything related to MMS generation and uploading
+
+Use arguments passed to the php script to specify what is wanted from the script
+in terms of what is to be actioned. i.e. upload an xml file only OR generate new xml files to upload.
+
+To come later:
+- GPS point generation for mms orders to test proximity testing
+
+script syntax
+
+max-mms-order-util [command] [-options]
+
+Commands:
+generate
+config
+
+Options:
+generate
+-c : create new mms order templates and upload accepted state xml file to MAX
+-C : Only generate xml files and do not upload
+-u '/path/to/file.xml': Only upload xml file to MAX. Specify /path/to/file.xml
+
+config
+-x '/path/to/folder': set directory to save mms xml files.
+-d '/path/to/file.json' : set path to file to read/write configuration.
+-c '/path/to/config.json' : create a default config file.
+-l : Give location of config file
+
+Program flow:
+
+1.) Check if json file exists which points to main config file
+ 1.1.) If main config exists continue to 2.) else goto 1.2.)
+ 1.2.) Does correct/expected directory structure exist in which to store config files ? Yes -> Goto 1.3) : No -> Goto 1.2.1)
+	1.2.1.) Create the directory then goto 1.2.) if no exception else goto 100.1)
+ 1.3.) Create default path.json -> 1.1)
+ 
+2.) Read path.json file and validate its data ? Data correct -> 3.) : Data bad -> 100.1)
+
+3.) Read main.json file and validate its data ? Data correct -> 4.) : Data bad -> 100.1)
+
+4.) Check for passed command line arguments using $_SERVER['argv'] constant. Arguments count > 0 ? Goto 4.1.) : Goto 4.2.)
+4.1.) 
+4.2.) 
+
+100.1) Throw Exception
