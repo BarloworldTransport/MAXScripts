@@ -31,6 +31,7 @@ Options:
 --get-config-path | -d '/path/to/file.json' : set path to file to read/write configuration.
 --create-config-file | -D '/path/to/config.json' : create a default config file.
 --get-config-path | -l : Give location of config file
+--set-config-default-upload-platform 'test'|'live' | -U : set default platform to upload xml files too. Default is 'test'
 
 Program flow:
 
@@ -48,12 +49,29 @@ Program flow:
 4.1.) options given ? --create-upload | -c -> 5.) : --create-only | -C -> 5.) : --upload-xml | -u -> 6.) : --create-templates | -r -> 7.)
 
 # Generate xml file for MMS orders
-5.)
+5.) Check if mms templates exist? Yes -> 5.1.) : No -> 7.)->5.)
+5.1.) Load data for mms templates into array
+5.2.) Get location of data folder. Check if data folder exists? Yes -> 5.3.) : No -> 5.2.1.)
+5.2.1.) Create the data folder -> 5.2.)
+5.3.) Generate random times, order numbers and data to make order unique and preg_replace values into each mms string value
+5.4.) Create xml files for each mms order state: Accepted[Insert], Accepted[Update], Disbanded[Update], Delivered[Update]
+5.5.) Check if xml files have been successfully created ? Yes -> 5.6.) : No -> 100.1.)
+5.6.) If no arguments given from command line | --create-upload | -c option was given -> 6.) 
+5.7.) RETURN $mms_orders_data
 
 # Upload xml file to MAX
-6.)
+6.) Check if supplied xml file exists ? Yes -> 6.1.) : No -> 200.1.) -> RETURN FALSE
+6.1.) Run BarloworldTripClient method to upload xml file to MAX platform specified
+6.2.) Check order has been uploaded to queue on MAX platform (via clia api Data/get) ? Yes -> RETURN $shipmentNumber : No -> 200.1.)->RETURN False
 
 # Generate mms order templates
-7.)
+7.) Does the mms templates exist ? Yes -> 7.1.) : No -> 7.2.)
+7.1.) Delete the current template files -> 7.2.)
+7.2.) Get the location of the data path and check if the directory exists ? Yes -> 7.3.) : No -> 7.2.1.)
+7.2.1.) Create the data path -> 7.2.)
+7.3.) Fetch an MMS Order from MAX Live DB using clia API Data/get. Create Accepted[Insert], Accepted[Update], Disbanded[Update], Delivered[Update] values stored into a json file -> 7.4.)
+7.4.) Does the mms templates exists ? Yes -> RETURN $json_array_variable : No -> 100.1)
+
 
 100.1) Throw Exception
+200.1.) Add Error to Class Error Array Property
