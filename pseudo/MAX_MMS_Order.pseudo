@@ -18,23 +18,19 @@ To come later:
 
 script syntax
 
-max-mms-order-util [command] [-options]
-
-Commands:
-generate
-config
+php max-mms-order-util.php [-option|--option]
 
 Options:
-generate
--c : create new mms order templates and upload accepted state xml file to MAX
--C : Only generate xml files and do not upload
--u '/path/to/file.xml': Only upload xml file to MAX. Specify /path/to/file.xml
 
-config
--x '/path/to/folder': set directory to save mms xml files.
--d '/path/to/file.json' : set path to file to read/write configuration.
--c '/path/to/config.json' : create a default config file.
--l : Give location of config file
+--create-upload | -c : create new mms order templates and upload accepted state xml file to MAX
+--create-only | -C : Only generate xml files and do not upload
+--upload-xml | -u '/path/to/file.xml': Only upload xml file to MAX. Specify /path/to/file.xml
+--create-templates | -r : Delete, if any existing templates, and create new templates for mms orders
+
+--get-data-path | -x '/path/to/folder': set directory to save mms xml files.
+--get-config-path | -d '/path/to/file.json' : set path to file to read/write configuration.
+--create-config-file | -D '/path/to/config.json' : create a default config file.
+--get-config-path | -l : Give location of config file
 
 Program flow:
 
@@ -48,8 +44,16 @@ Program flow:
 
 3.) Read main.json file and validate its data ? Data correct -> 4.) : Data bad -> 100.1)
 
-4.) Check for passed command line arguments using $_SERVER['argv'] constant. Arguments count > 0 ? Goto 4.1.) : Goto 4.2.)
-4.1.) 
-4.2.) 
+4.) Check for passed command line arguments using $_SERVER['argv'] constant. Arguments count > 0 ? Goto 4.1.) : Goto 5.))
+4.1.) options given ? --create-upload | -c -> 5.) : --create-only | -C -> 5.) : --upload-xml | -u -> 6.) : --create-templates | -r -> 7.)
+
+# Generate xml file for MMS orders
+5.)
+
+# Upload xml file to MAX
+6.)
+
+# Generate mms order templates
+7.)
 
 100.1) Throw Exception
