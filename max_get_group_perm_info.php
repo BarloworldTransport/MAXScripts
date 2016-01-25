@@ -31,6 +31,7 @@ class max_get_group_perm_info {
     CONST HOST_DB = "192.168.1.19";
     CONST DEFAULT_LIMIT = 5;
     CONST SQL_QUERY = array(
+    
 		"max_get_processes_for_group" => "SELECT ocap.id,
 ocap.handle AS 'processHandle',
 objr.handle AS 'objRegHandle',
@@ -45,7 +46,34 @@ LEFT JOIN `group` AS gowner ON (gowner.id=oca.group_owner_group_id)
 LEFT JOIN `group` AS powner ON (powner.id=oca.primary_owner_group_id)
 WHERE (powner.id = %poid) OR (gowner.id = %goid)
 ORDER BY ocap.handle;",
-		"max_get_subgroups_for_group" => "b"
+
+		"max_get_subgroups_for_group" => "SELECT `rg`.`name` AS `groupName`
+FROM `group_role_link` AS `grl`
+LEFT JOIN `group` AS `pg` ON (`pg`.id = `grl`.`played_by_group_id`)
+LEFT JOIN `group` AS `rg` ON (`rg`.`id` = `grl`.`group_id`)
+WHERE `pg`.`id` = %gid
+ORDER BY `rg`.`name`;",
+
+		"max_get_dataviews" => "SELECT `dv`.`id`,
+`dv`.`_type` AS `type`,
+`dv`.`name` AS `dataViewName`,
+`objr`.`id` AS `objReg_id`,
+`objr`.`handle` AS 'objRegHandle',
+`objr`.`name` AS 'objRegName',
+`dv`.`filter` AS 'dataViewFilter',
+`powner`.`name` AS 'primaryOwner',
+`dv`.`primary_owner_crud` AS 'primaryOwnerCRUD',
+`gowner`.`name` AS 'groupOwner',
+`dv`.`group_owner_crud` AS 'groupOwnerCRUD'
+FROM `dataview` AS `dv`
+LEFT JOIN `group` AS `powner` ON (`powner`.`id`=`dv`.`primary_owner_group_id`)
+LEFT JOIN `group` AS `gowner` ON (`gowner`.`id`=`dv`.`group_owner_group_id`)
+LEFT JOIN `objectregistry` AS `objr` ON (`objr`.`id`=`dv`.`objectRegistry_id`)
+WHERE (`powner`.`id` = %pgid) OR (`gowner`.`id` = %gid);",
+		
+		"max_get_permission_templates" => "",
+		
+		"max_get_objreg_permissions" => ""
 	);
     	//: Variables
     	private static $_usage = array(
