@@ -6,10 +6,10 @@ LIMIT 1;
 
 # Look for Meadow Feeds PMB orders
 SELECT id, xml FROM scheduledimportedtrip
-WHERE xml LIKE "%ClientCode>NCP%" AND xml LIKE "%Status>Delivered%"
+WHERE xml LIKE "%ClientCode>MEAF%" AND xml LIKE "%%ShipmentNumber>RFT%" AND xml LIKE "%Status>Delivered%" AND xml LIKE "%<StartLoading>%"
 ORDER BY ID DESC
 LIMIT 1;
 
 # Look for order with shipment number
 SELECT id FROM scheduledimportedtrip
-WHERE xml LIKE "%ClientCode>NCP%" AND xml LIKE "%Status>Accepted%" AND xml LIKE "%ShipmentNumber>257660%";
+WHERE xml LIKE "%ClientCode>MEAF%" AND xml LIKE "%Status>Accepted%" AND xml LIKE "%ShipmentNumber>RFT968037%";

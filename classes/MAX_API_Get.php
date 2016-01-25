@@ -625,7 +625,7 @@ class MAX_API_Get
      * MAX_API_Get::addError()
      * Add a new error to the class protected property _errors
      */
-    private function addError($_step, $_errTitle, $_errDetail, $_errFunc)
+    private function _addError($_step, $_errTitle, $_errDetail, $_errFunc)
     {
         if (is_string($_step) && is_string($_errTitle) && is_string($_errDetail) && is_string($_errFunc)) {
             $_errMsg = preg_replace("/%s/", $_step, self::ERR_STR);
@@ -699,5 +699,14 @@ class MAX_API_Get
 			$this->_addError('Extract data from HTML', 'Caught Exception: ', $e->getMessage(), __FUNCTION__);
 		}
     }
-    // : End - Private Functions
+	// : End - Private Functionsa
+}
+$_api = new MAX_API_Get("live");
+$_api->setObject('Person');
+$_api->setFilter('email like "%timber24%"');
+$_api->runApiQuery();
+$_data = $_api->getData();
+if (count($_api->getErrors()) > 0)
+{
+  print_r($_api->getErrors());
 }
