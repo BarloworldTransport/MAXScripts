@@ -71,9 +71,33 @@ LEFT JOIN `group` AS `gowner` ON (`gowner`.`id`=`dv`.`group_owner_group_id`)
 LEFT JOIN `objectregistry` AS `objr` ON (`objr`.`id`=`dv`.`objectRegistry_id`)
 WHERE (`powner`.`id` = %pgid) OR (`gowner`.`id` = %gid);",
 		
-		"max_get_permission_templates" => "",
+		"max_get_permission_templates" => "SELECT `gpt`.`ID` AS `permissionTemplate_id`,
+`gpt`.`condition`,
+`obr`.`name` AS `objectRegistry_name`,
+`gr`.`name` AS `defaultGroup_name`,
+`tpog`.`name` AS `templatePrimaryOwner_name`,
+`gpt`.`template_primary_owner_crud` AS `templatePrimaryOwner_crud`,
+`tgog`.`name` AS `templateGroupOwner_name`,
+`gpt`.`template_group_owner_crud` AS `templateGroupOwner_crud`,
+`gpt`.`rule`
+FROM `grouppermissiontemplate` AS `gpt`
+LEFT JOIN `objectregistry` AS `obr` ON (`obr`.`ID`=`gpt`.`_ObjectRegistry_id`)
+LEFT JOIN `group` AS `gr` ON (`gr`.`ID`=`gpt`.`group_id`)
+LEFT JOIN `group` AS `tpog` ON (`tpog`.`ID`=`gpt`.`template_primary_owner_group_id`)
+LEFT JOIN `group` AS `tgog` ON (`tgog`.`ID`=`gpt`.`template_group_owner_group_id`)
+WHERE `obj`.`ID` IN (%objid);",
 		
-		"max_get_objreg_permissions" => ""
+		"max_get_objreg_permissions" => "SELECT `objr`.`ID`,
+`objr`.`handle`,
+`powner`.`name` AS `primaryOwner_name`,
+`objr`.`primary_owner_crud` as `primaryOwner_crud`,
+`gowner`.`name` AS `groupOwner_name`,
+`objr`.`group_owner_crud` AS `groupOwner_crud`
+FROM `objectregistry` AS `objr`
+LEFT JOIN `group` AS `gowner` ON (`gowner`.`ID`=`objr`.`group_owner_group_id`)
+LEFT JOIN `group` AS `powner` ON (`powner`.`ID`=`objr`.`primary_owner_group_id`)
+WHERE `objr`.`primary_owner_group_id` = %gid OR `objr`.`group_owner_group_id` = %gid
+ORDER BY `objr`.`handle` ASC;"
 	);
     	//: Variables
     	private static $_usage = array(
@@ -102,52 +126,32 @@ WHERE (`powner`.`id` = %pgid) OR (`gowner`.`id` = %gid);",
 	public function __construct() {
 	// Construct an array with predefined date(s) which we will use to run a report
 		var_dump(SELF::SQL_QUERY);
-		//$options = getopt("t:l:");
-		/*
-		$_result_limit = intval($options["l"]) ? intval($options["l"]) : SELF::DEFAULT_LIMIT;
 		
-        $sqlfile = $options["t"];
-        if ($sqlfile) {
-            $_ids = explode(",", $sqlfile);
-        } else {
-		$this->printUsage();
-        }
-        
-        
-
-        
-        $sqlData = new PullDataFromMySQLQuery(self::TENANT_DB, self::HOST_DB);
-        // Run query and return result
-        if (is_array($_ids)) {
-            $_x = 1;
-            foreach($_ids as $_id) {
+		$sqlData = new PullDataFromMySQLQuery(self::TENANT_DB, self::HOST_DB);
+		
+		// Clear screen - UNIX
+		system('clear'); system('clear');
+		
+		$_query = preg_replace("/%s/", $_id, self::SQL_QUERY);
+		$_query = preg_replace("/%d/", $_result_limit, $_query);
                 
-                $_query = preg_replace("/%s/", $_id, self::SQL_QUERY);
-                $_query = preg_replace("/%d/", $_result_limit, $_query);
-                
-                $_data = $sqlData->getDataFromQuery($_query);
+		$_data = $sqlData->getDataFromQuery($_query);
 
-        		if ($_data) {
+        if ($_data) {
 					
-					// Clear the screen
-					system('clear');
-					system('clear');
-					
-                    foreach($_data as $_key => $_value) {
-                        echo $_x . PHP_EOL;
-                        if (is_array($_value)) {
-                            foreach($_value as $_key2 => $_value2) {
-                                echo "$_key2: $_value2" . PHP_EOL;
-                            }
-                        }
-                        $_x++;
-                    }
-                } else {
-                    echo "NO RESULT" . PHP_EOL;
-                }
-            }
-        }
-        */
+			foreach($_data as $_key => $_value) {
+				echo $_x . PHP_EOL;
+                if (is_array($_value)) {
+					foreach($_value as $_key2 => $_value2) {
+						echo "$_key2: $_value2" . PHP_EOL;
+					}
+				}
+				$_x++;
+			}
+		} else {
+			echo "NO RESULT" . PHP_EOL;
+		}
+		
 	}
 
 	/** runsqlfile::__destruct()
