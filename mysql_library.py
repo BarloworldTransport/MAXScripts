@@ -1,30 +1,48 @@
 #!/usr/bin/python
+
+''' Object::mysql_library.py
+	@author Clinton Wright
+	@author cwright@bwtrans.co.za
+	@copyright 2016 onwards Manline Group (Pty) Ltd
+	@license GNU GPL
+	@see http://www.gnu.org/copyleft/gpl.html
+'''
+
 try:
 	import mysql.connector
 except ImportError:
 	print("The python-mysql-connector-2.0 is required to run this program. Please install it and try again")
 
+try:
+	import bwtlib
+except:
+	print("The bwtlib.py module is required to run this script. Please verify that it exists")
+
+try:
+	import os
+except:
+	print("Failed to import config.py file. Please make certain that the file exists and has the expected data in it")
+
+# Set config filename and build absolute path to the config file and store into a string
+config_file = 'config.json'
+
+# Load the JSON config file and store it into a dict variable
+config_data = bwtlib.file_methods.load_json_file(config_file)
+
 
 class mysql_object:
-
-	config = {
-		"user" : "root",
-		"password" : "kaluma",
-		"host" : "127.0.0.1",
-		"database" : "max2"
-	}
 	
 	cnx = None
 	cursor = None
 	
-	def __init__(self, _host, _db):
-
-		if(type(_host) is str and type(_db) is str):
-
-			self.config['host'] = _host
-			self.config['database'] = _db
-			
-			self.mysql_connect(self.config)
+	def __init__(self):
+		
+		if type(config_data) is dict:
+			db_config = config_data['mysql']
+			self.mysql_connect(db_config)
+		else:
+			print("Failed to load JSON config file: " + os.path.join(bwtlib.file_methods.get_config_path, config_file))
+			return None
 
 	def mysql_connect(self, _config):
 		
@@ -78,3 +96,4 @@ class mysql_object:
 			print("Failed to run a query:\n")
 			print(err)
 			self.cursor.close()
+
