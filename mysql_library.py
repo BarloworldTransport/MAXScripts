@@ -73,21 +73,27 @@ class mysql_object:
 			self.cursor = self.cnx.cursor()
 			self.cursor.execute(_query)
 			self.cursor.fetchall()
-			_count = self.cursor.rowcount
-			_column_count = len(self.cursor.column_names)
-			_data = [[0 for x in range(_column_count)] for x in range(_count)]
+			row_count = self.cursor.rowcount
+			column_count = len(self.cursor.column_names)
+			row_data = {}
 
 			self.cursor.execute(_query)
 
 			for (idx, x) in enumerate(self.cursor):
-				
+
 				for(idy, y) in enumerate(self.cursor.column_names):
-					_data[idx][idy] = x[idy]
-				
+
+					# If this is the first column iteration then add index to dict as blank dict
+					if idy == 0:
+						row_data[idx] = {}
+						
+					# Add associative array data to dict index for row entry	
+					row_data[idx][y] = x[idy]
+			
 			self.cursor.close()
 			
-			if len(_data) > 0:
-				return _data
+			if len(row_data) > 0 and len(row_data) == row_count:
+				return row_data
 			else:
 				return False
 
