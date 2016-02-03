@@ -23,14 +23,14 @@ try:
 except:
 	print("An error occured when trying to import the json python library. Make sure that it is installed")
 
-class file_methods(object):
+class FileMethods(object):
 	
 	config_path = 'config'
 	
 	@staticmethod
 	def load_json_file(aFile):
 		
-		full_path = os.path.join(file_methods.get_config_path(), aFile)
+		full_path = os.path.join(FileMethods.get_config_path(), aFile)
 		
 		p = pathlib.Path(full_path)
 		if p.exists():
@@ -44,6 +44,6 @@ class file_methods(object):
 	@staticmethod
 	def get_config_path():
 		try:
-			return os.path.join(os.path.dirname(os.path.realpath(__file__)), file_methods.config_path)
+			return os.path.join(os.path.dirname(os.path.realpath(__file__)), FileMethods.config_path)
 		except:
 			return False

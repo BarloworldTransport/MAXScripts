@@ -27,10 +27,10 @@ except:
 config_file = 'config.json'
 
 # Load the JSON config file and store it into a dict variable
-config_data = bwtlib.file_methods.load_json_file(config_file)
+config_data = bwtlib.FileMethods.load_json_file(config_file)
 
 
-class mysql_object:
+class MySQLObject:
 	
 	cnx = None
 	cursor = None
@@ -41,7 +41,7 @@ class mysql_object:
 			db_config = config_data['mysql']
 			self.mysql_connect(db_config)
 		else:
-			print("Failed to load JSON config file: " + os.path.join(bwtlib.file_methods.get_config_path, config_file))
+			print("Failed to load JSON config file: " + os.path.join(bwtlib.FileMethods.get_config_path, config_file))
 			return None
 
 	def mysql_connect(self, _config):
@@ -86,6 +86,7 @@ class mysql_object:
 					# If this is the first column iteration then add index to dict as blank dict
 					if idy == 0:
 						row_data[idx] = {}
+						row_data[idx] = {}
 						
 					# Add associative array data to dict index for row entry	
 					row_data[idx][y] = x[idy]
@@ -102,4 +103,3 @@ class mysql_object:
 			print("Failed to run a query:\n")
 			print(err)
 			self.cursor.close()
-
