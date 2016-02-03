@@ -28,19 +28,19 @@ sql_queries = {
 FROM `group` \
 WHERE `name` = '%s'",
 	"max_get_processes_for_group" : "SELECT ocap.id, \
-ocap.handle AS 'processHandle', \
-objr.handle AS 'objRegHandle', \
-powner.name AS 'primaryOwner', \
-oca.primary_owner_crud as 'primaryOwnerCRUD', \
-gowner.name AS 'groupOwner', \
-oca.group_owner_crud AS 'groupOwnerCRUD' \
-FROM objectcrudactionprocess AS ocap \
-LEFT JOIN objectcrudaction AS oca ON (oca.id=ocap._ObjectCrudAction_id) \
-LEFT JOIN objectregistry AS objr ON (objr.id=oca.objectRegistry_id) \
-LEFT JOIN `group` AS gowner ON (gowner.id=oca.group_owner_group_id) \
-LEFT JOIN `group` AS powner ON (powner.id=oca.primary_owner_group_id) \
-WHERE (powner.id = %gid) OR (gowner.id = %gid) \
-ORDER BY ocap.handle;",
+`ocap`.`handle` AS `processHandle`, \
+`objr`.`handle` AS `objRegHandle`, \
+`powner`.`name` AS `primaryOwner`, \
+`oca`.`primary_owner_crud` as `primaryOwnerCRUD`, \
+`gowner`.`name` AS `groupOwner`, \
+`oca`.`group_owner_crud` AS `groupOwnerCRUD` \
+FROM `objectcrudactionprocess` AS `ocap` \
+LEFT JOIN `objectcrudaction` AS `oca` ON (`oca`.`id`=`ocap`.`_ObjectCrudAction_id`) \
+LEFT JOIN `objectregistry` AS `objr` ON (`objr`.`id`=`oca`.`objectRegistry_id`) \
+LEFT JOIN `group` AS gowner ON (`gowner`.`id`=`oca`.`group_owner_group_id`) \
+LEFT JOIN `group` AS powner ON (`powner`.`id`=`oca`.`primary_owner_group_id`) \
+WHERE (`powner`.`id` = %gid) OR (`gowner`.`id` = %gid) \
+ORDER BY `ocap`.`handle`;",
 
 	"max_get_subgroups_for_group" : "SELECT `rg`.`name` AS `groupName` \
 FROM `group_role_link` AS `grl` \
@@ -53,13 +53,13 @@ ORDER BY `rg`.`name`;",
 `dv`.`_type` AS `type`, \
 `dv`.`name` AS `dataViewName`, \
 `objr`.`id` AS `objReg_id`, \
-`objr`.`handle` AS 'objRegHandle', \
-`objr`.`name` AS 'objRegName', \
-`dv`.`filter` AS 'dataViewFilter', \
-`powner`.`name` AS 'primaryOwner', \
-`dv`.`primary_owner_crud` AS 'primaryOwnerCRUD', \
-`gowner`.`name` AS 'groupOwner', \
-`dv`.`group_owner_crud` AS 'groupOwnerCRUD' \
+`objr`.`handle` AS `objRegHandle`, \
+`objr`.`name` AS `objRegName`, \
+`dv`.`filter` AS `dataViewFilter`, \
+`powner`.`name` AS `primaryOwner`, \
+`dv`.`primary_owner_crud` AS `primaryOwnerCRUD`, \
+`gowner`.`name` AS `groupOwner`, \
+`dv`.`group_owner_crud` AS `groupOwnerCRUD` \
 FROM `dataview` AS `dv` \
 LEFT JOIN `group` AS `powner` ON (`powner`.`id`=`dv`.`primary_owner_group_id`) \
 LEFT JOIN `group` AS `gowner` ON (`gowner`.`id`=`dv`.`group_owner_group_id`) \
@@ -85,7 +85,7 @@ WHERE `obj`.`ID` IN (%objid);",
 	"max_get_objreg_permissions" : "SELECT `objr`.`ID`, \
 `objr`.`handle`, \
 `powner`.`name` AS `primaryOwner_name`, \
-`objr`.`primary_owner_crud` as `primaryOwner_crud`, \
+`objr`.`primary_owner_crud` AS `primaryOwner_crud`, \
 `gowner`.`name` AS `groupOwner_name`, \
 `objr`.`group_owner_crud` AS `groupOwner_crud` \
 FROM `objectregistry` AS `objr` \
