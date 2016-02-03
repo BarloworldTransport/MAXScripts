@@ -264,7 +264,7 @@ def print_permission_data(perm_data):
 										# Convert set to a string
 										value_str = ', '.join(perm_data[data_item][data_item_key][sub_data][sub_data_item])
 								
-									f.write("{}: {}".format(sub_data_item, value_str))
+									f.write("{}: {}\n".format(sub_data_item, value_str))
 			f.close()
 			print("\n\nSaved permissions to file: {}\n".format(file_name))
 				
