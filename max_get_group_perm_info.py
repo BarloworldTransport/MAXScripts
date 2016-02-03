@@ -228,6 +228,11 @@ def print_permission_data(perm_data):
 			f = open(file_name, 'w+')
 		
 			f.write('MAX permission listing for group: {}'.format(arg_group))
+			
+			f.write('\n\nSub Groups Listing:\n')
+			
+			for data_item in perm_data:
+				f.write("{}\n".format(data_item))
 		
 			value_str = ''
 		
