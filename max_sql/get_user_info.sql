@@ -1,7 +1,8 @@
-SET @email="tmarimuthu@manlinegroup.com";
+SET @email="mcampher@manlinegroup.com";
 SELECT CONCAT(p.first_name, " ", p.last_name) as contactName,
 f.name as defaultFleet,
 p.email,
+p.jobTitle,
 pu.id as permissionUser_id,
 p.id as person_id,
 pu.status
