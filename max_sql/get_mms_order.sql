@@ -17,6 +17,6 @@ ORDER BY ID DESC
 LIMIT 1;
 
 # Get all orders with shipment number
-SELECT payload FROM queueentry
-WHERE payload LIKE "%xml%" AND payload LIKE "%ClientCode>MEAF%" AND payload LIKE "%ShipmentNumber>PA119233%" AND queue = "importedtrip"
+SELECT * FROM queueentry
+WHERE payload LIKE "%xml%" AND payload LIKE "%ClientCode>MEAF%" AND payload LIKE "%ShipmentNumber>DM666645%" AND queue = "importedtrip"
 ORDER BY ID DESC\G
