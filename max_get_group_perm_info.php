@@ -131,7 +131,7 @@ ORDER BY `objr`.`handle` ASC;"
 		
 		// Clear screen - UNIX
 		system('clear'); system('clear');
-		
+		$_clia_arguments = 
 		$_query = preg_replace("/%s/", $_id, self::SQL_QUERY);
 		$_query = preg_replace("/%d/", $_result_limit, $_query);
                 

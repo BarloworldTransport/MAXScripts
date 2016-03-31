@@ -34,9 +34,11 @@ class build_user_list_with_groups {
 	
 	const CONFIG_FILE = "app_data.ini";
 	
-	const SQL_FETCH_GROUP_ROLE_LINKS = 'SELECT gp.name FROM group_role_link AS grl LEFT JOIN `group` AS gp ON (gp.id=grl.group_id) WHERE grl.played_by_group_id=%g;';
+	const SQL_FETCH_GROUP_ROLE_LINKS = 'SELECT gp.name FROM group_role_link AS grl LEFT JOIN `group` AS gp ON (gp.id=grl.group_id) WHERE grl.played_by_group_id=%g';
 	
-	const SQL_FETCH_USERS = 'SELECT CONCAT(p.first_name, " ", p.last_name) AS fullName, p.email, pu.personal_group_id FROM permissionuser AS pu LEFT JOIN person AS p ON (p.id=pu.person_id) WHERE pu.status = 1;';
+	const SQL_FETCH_USERS = 'SELECT CONCAT(p.first_name, " ", p.last_name) AS fullName, p.email, pu.personal_group_id FROM permissionuser AS pu LEFT JOIN person AS p ON (p.id=pu.person_id) WHERE pu.status = "Enabled";';
+    
+    const SQL_FETCH_FILTERED_USERS = 'SELECT CONCAT(p.first_name, " ", p.last_name) AS fullName, p.email, pu.personal_group_id FROM permissionuser AS pu LEFT JOIN person AS p ON (p.id=pu.person_id) LEFT JOIN group_role_link AS grl ON (grl.played_by_group_id = pu.personal_group_id) WHERE pu.status = "Enabled" AND grl.group_id IN (%d)';
 	
 	// : Properties
 	protected $_dbname;
@@ -44,6 +46,7 @@ class build_user_list_with_groups {
 	protected $_errdir;
 	protected $_reportdir;
 	protected $_proxyip;
+	protected $_group_ids;
 	
 	private static $_columns = array(
 		"fullName",
@@ -54,9 +57,32 @@ class build_user_list_with_groups {
 	// : Magic Methods
 	
 	public function __construct() {
-		
+
+		// : Get clia command switch argument if supplied
+		$_options = getopt('g:');
+		$_validate = (boolean) true;
+
+		if ($_options)
+		{
+			$_group_ids = explode(',', $_options['g']);
+			$callback = function($value, $key) {
+				if (intval($value) === 0 || (!$value))
+				{
+					$_validate = false;
+				};
+			};
+			array_walk($_group_ids, $callback);
+
+			if ($_validate)
+			{
+				$this->_group_ids = $_group_ids;
+			}
+		}
+		//  :End
+
 		// : Parse config file
 		$ini = dirname(realpath(__FILE__)) . self::DS . "config" . self::DS . self::CONFIG_FILE;
+
                 
        if (is_file($ini) === FALSE) {
 			print("ERROR: Config file not found: " . self::INI_FILE . PHP_EOL . "Please create it and populate it with the following data: proxy='username:password@proxyip:proxyport', errordir='path/from/script/root/dir/to/error/dir/', reportdir='path/from/script/root/dir/to/report/dir/', dbname='database name', dbhost='database server IP'" . PHP_EOL);
@@ -84,7 +110,13 @@ class build_user_list_with_groups {
 			$_users = (array) array();
 			
 			// : Fetch list of active users from the DB server
-			$_query = self::SQL_FETCH_USERS;
+            if ($this->_group_ids)
+            {
+                $_group_ids = implode(',', $this->_group_ids);
+                $_query = preg_replace('/%d/', $_group_ids, self::SQL_FETCH_FILTERED_USERS);
+            } else {
+                $_query = self::SQL_FETCH_USERS;
+            }
 			$_result = $_db->getDataFromQuery ( $_query );
 			
 			if ($_result) {
@@ -107,6 +139,7 @@ class build_user_list_with_groups {
 						
 						$_personal_group_id = $value1['personal_group_id'];
 						$_query = preg_replace("/%g/", $value1['personal_group_id'], self::SQL_FETCH_GROUP_ROLE_LINKS);
+
 						$_result = $_db->getDataFromQuery ( $_query );
 						
 						if ($_result) {
