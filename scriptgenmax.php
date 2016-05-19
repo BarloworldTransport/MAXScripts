@@ -88,7 +88,7 @@ class scriptgenmax
     private static $_usage = array(
         "SCRIPTGENMAX - A script that generates clia commands to update batch records on MAX.",
         "",
-        "Usage: scriptgenmax.php -t {function} -f {filename} -p {primaryOwnerGroup,primaryOwnerCRUD,groupOwnerGroup,groupOwnerCRUD}",
+        "Usage: scriptgenmax.php -t {function} -f {filename} -p {primaryOwnerGroup,primaryOwnerCRUD,groupOwnerGroup,groupOwnerCRUD} -o {objectRegistryHandle}",
         "",
         "Arguments:",
         "",
@@ -100,6 +100,8 @@ class scriptgenmax
 		"primaryOwnerCRUD = CRUD (C: Create, R: Read, U: Update, D: Delete) - If not specified default value: CRUD",
 		"groupOwnerGroup = group owner group on MAX (group must exist)",
 		"groupOwnerCRUD = CRUD (C: Create, R: Read, U: Update, D: Delete) - If not specified default value: R",
+		"",
+		"-o: objectRegistryHandle - only required if using -t objectinstances option",
 		"",
         "Optional options:",
         "-f: csv filename to be used to generate clia commands. The path for this file is specified in app_data.ini config file",
@@ -120,7 +122,11 @@ class scriptgenmax
 		"",
 		"primaryOwnerCRUD: CRUD",
 		"",
-		"groupOwnerCRUD: R"
+		"groupOwnerCRUD: R",
+		"",
+		"Build bash script containing batch clia commands to update all person object instances with specified group and permissions:",
+		"scriptgenmax.php -t objectinstances -p Admin,CRUD,All Users,R -o Person -f filename.sh",
+		""
     );
 	
 	private static $_sh_header_comment = array(
@@ -671,7 +677,7 @@ class scriptgenmax
 		$_query2 = preg_replace("/%db/", self::DB_MAX, self::SQL_DOES_TABLE_EXIST);
 		$_query2 = preg_replace("/%t/", $_table, $_query2);
 		$_query3 = preg_replace("/%t/", $_table, self::SQL_GET_RECORDS_FOR_OBJECT);
-		
+
 		// Do check for object in objectregistry table
 		$_objExist = false;
 		$_result = $this->_dbmax->getDataFromQuery($_query1);
@@ -701,7 +707,7 @@ class scriptgenmax
 		$_query_x = (string) "";
 		$_data = (array) array();
 
-		switch ($_objectRegistry) {
+		switch ($_table) {
 		case "permissionuser":
 			$_where = " WHERE status != 'Disabled'";
 			$_query_x = preg_replace('/%s/', $_where, self::SQL_GET_RECORDS_FOR_OBJECT);
@@ -709,6 +715,11 @@ class scriptgenmax
 			break;
 		case "person":
 			$_query_x = "SELECT p.id FROM permissionuser AS pu LEFT JOIN person AS p ON (p.id=pu.person_id) WHERE pu.status != 'Disabled' ORDER BY ID DESC;";
+			break;
+		case "group":
+			$_where = " WHERE is_personal_group = 1";
+			$_query_x = preg_replace('/%s/', $_where, self::SQL_GET_RECORDS_FOR_OBJECT);
+			$_query_x = preg_replace('/%t/', "`$_table`", $_query_x);
 			break;
 		default:
 			$_query_x = preg_replace('/%s/', '', $_query3);
