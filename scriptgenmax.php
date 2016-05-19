@@ -69,7 +69,7 @@ class scriptgenmax
     // : End
 	// : MAX clia commands to update ownership and permissions for object instances
 	
-	const MAX_CLIA_OBJ_ASSIGN_PERMISSIONS = "\$clia ObjectRegistry assignPermissions object=%ob 'id=%id' primaryOwner='%po' primaryOwnerCrud='%pc' groupOwnerCrud='%gc' groupOwner='%go'";
+	const MAX_CLIA_OBJ_ASSIGN_PERMISSIONS = "\$clia ObjectRegistry setPermissions objectRegistry=%ob 'id=%id' primaryOwner='%po' primaryOwnerCrud='%pc' groupOwnerCrud='%gc' groupOwner='%go'";
 	
 	// : End
 	// : Errors

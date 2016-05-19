@@ -17,5 +17,5 @@ ORDER BY ID DESC\G
 
 # Get all orders with shipment number
 SELECT * FROM queueentry
-WHERE payload LIKE "%ClientCode>MEAF%" AND payload LIKE "%ShipmentNumber>Delivered%" AND queue = "importedtrip" AND status = 'Done'
+WHERE payload LIKE "%ClientCode>MEAF%" AND payload LIKE "%Status>Delivered%" AND queue = "importedtrip" AND status = 'Done'
 ORDER BY ID DESC\G
