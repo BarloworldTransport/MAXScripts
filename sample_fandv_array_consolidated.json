@@ -1,0 +1,174 @@
+  [27]=>
+  array(19) {
+    ["id"]=>
+    int(5651)
+    ["tradingName"]=>
+    string(26) "Illovo Refined GBD F and V"
+    ["fixedContribution"]=>
+    int(261093)
+    ["fixedCost"]=>
+    int(2872026)
+    ["numberOfDays"]=>
+    int(6)
+    ["rate"]=>
+    string(8) "930.0000"
+    ["buname"]=>
+    string(9) "Dedicated"
+    ["startDate"]=>
+    string(19) "2016-02-29 22:00:00"
+    ["endDate"]=>
+    string(19) "2016-03-31 21:59:59"
+    ["description"]=>
+    string(11) "Bulk Tanker"
+    ["dpm"]=>
+    string(6) "7.0000"
+    ["dpt"]=>
+    string(8) "400.0000"
+    ["fc"]=>
+    string(9) "5470.0000"
+    ["fval"]=>
+    NULL
+    ["ed"]=>
+    string(8) "400.0000"
+    ["eek"]=>
+    string(6) "0.0000"
+    ["rat"]=>
+    string(4) "R/km"
+    ["trucks"]=>
+    array(59) {
+      [774]=>
+      string(6) "343061"
+      [788]=>
+      string(6) "545217"
+      [876]=>
+      string(6) "525200"
+      [880]=>
+      string(6) "525252"
+      [476]=>
+      string(4) "D572"
+      [507]=>
+      string(4) "D577"
+      [828]=>
+      string(6) "343051"
+      [877]=>
+      string(6) "525201"
+      [781]=>
+      string(6) "807169"
+      [883]=>
+      string(5) "Hire2"
+      [2198]=>
+      string(4) "D530"
+      [873]=>
+      string(6) "545232"
+      [2197]=>
+      string(4) "D529"
+      [875]=>
+      string(6) "525199"
+      [2930]=>
+      string(17) "Illovo Sub 545231"
+      [831]=>
+      string(6) "343056"
+      [885]=>
+      string(5) "Hire4"
+      [881]=>
+      string(6) "807167"
+      [2194]=>
+      string(4) "D527"
+      [2257]=>
+      string(6) "545252"
+      [785]=>
+      string(6) "144002"
+      [1284]=>
+      string(4) "D446"
+      [871]=>
+      string(6) "545241"
+      [1212]=>
+      string(10) "DUP_343056"
+      [776]=>
+      string(6) "343063"
+      [2258]=>
+      string(6) "545253"
+      [2256]=>
+      string(6) "545251"
+      [787]=>
+      string(6) "644252"
+      [882]=>
+      string(5) "Hire1"
+      [869]=>
+      string(6) "545239"
+      [3157]=>
+      string(4) "D616"
+      [1130]=>
+      string(5) "Hire5"
+      [829]=>
+      string(6) "343053"
+      [830]=>
+      string(6) "343054"
+      [2195]=>
+      string(4) "D528"
+      [870]=>
+      string(6) "545240"
+      [551]=>
+      string(3) "E43"
+      [3159]=>
+      string(4) "D618"
+      [1209]=>
+      string(10) "DUP_343051"
+      [868]=>
+      string(6) "545238"
+      [2259]=>
+      string(6) "545254"
+      [874]=>
+      string(6) "545224"
+      [783]=>
+      string(6) "343064"
+      [782]=>
+      string(6) "343060"
+      [997]=>
+      string(10) "DUP_644252"
+      [2199]=>
+      string(4) "D531"
+      [784]=>
+      string(6) "144000"
+      [884]=>
+      string(5) "Hire3"
+      [775]=>
+      string(6) "343062"
+      [872]=>
+      string(6) "545242"
+      [1299]=>
+      string(4) "D461"
+      [786]=>
+      string(6) "144003"
+      [1637]=>
+      string(4) "D505"
+      [1283]=>
+      string(4) "D445"
+      [3158]=>
+      string(4) "D617"
+      [878]=>
+      string(6) "525250"
+      [879]=>
+      string(6) "525251"
+      [2253]=>
+      string(4) "D550"
+      [1211]=>
+      string(10) "DUP_343054"
+    }
+    ["routes"]=>
+    array(6) {
+      [13786]=>
+      string(34) "Germiston (JHB) TO Westrand[29.00]"
+      [2907]=>
+      string(37) "Germiston (JHB) TO Krugersdorp[47.00]"
+      [3613]=>
+      string(38) "Germiston (JHB) TO Isando (JHB)[20.00]"
+      [9342]=>
+      string(33) "Germiston (JHB) TO Midrand[47.00]"
+      [5348]=>
+      string(34) "Germiston (JHB) TO Pretoria[78.00]"
+      [13787]=>
+      string(36) "Germiston (JHB) TO Langlaagte[31.00]"
+    }
+  }
+
