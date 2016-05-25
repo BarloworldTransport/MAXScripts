@@ -1,0 +1,76 @@
+10
+
+dir
+109
+svn://192.168.1.9:11268/Classes/PHPExcel/locale
+svn://192.168.1.9:11268
+
+
+
+2014-02-07T14:16:30.350939Z
+109
+clinton
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+6a1dd155-6fbf-4f97-81c7-c661c7eb57e9
+
+cs
+dir
+
+da
+dir
+
+de
+dir
+
+en
+dir
+
+es
+dir
+
+fi
+dir
+
+fr
+dir
+
+hu
+dir
+
+it
+dir
+
+nl
+dir
+
+no
+dir
+
+pl
+dir
+
+pt
+dir
+
+ru
+dir
+
+sv
+dir
+
+tr
+dir
+
