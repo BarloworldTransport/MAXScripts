@@ -4,15 +4,15 @@ error_reporting(E_ALL);
 
 // : Includes
 
-include_once 'PHPUnit/Extensions/PHPExcel/Classes/PHPExcel.php';
+include_once dirname(__FILE__) . DIRECTORY_SEPERATOR . 'classes' . DIRECTORY_SEPERATOR . ' PHPExcel.php';
 /**
  * PHPExcel_Writer_Excel2007
  */
-include 'PHPUnit/Extensions/PHPExcel/Classes/PHPExcel/Writer/Excel2007.php';
+include dirname(__FILE__) . DIRECTORY_SEPERATOR . 'classes' . DIRECTORY_SEPERATOR . 'PHPExcel' . DIRECTORY_SEPERATOR . 'Writer' . DIRECTORY_SEPERATOR . 'Excel2007.php';
 /**
  * MySQL query pull and return data class
  */
-include dirname(__FILE__) . '/PullDataFromMySQLQuery.php';
+include dirname(__FILE__) . DIRECTORY_SEPARATOR .  'PullDataFromMySQLQuery.php';
 // : End
 
 /**
@@ -56,6 +56,10 @@ WHERE `cu`.`active` = 1 AND `cu`.`primaryCustomer` = 1 AND `cu`.`useFandVContrac
     
     const SQL_QUERY_GET_OBJ_UDO_FANDVCONTRACT_ROUTELINK_ID = "SELECT `ID` FROM `objectregistry` WHERE `handle` LIKE 'udo_fandvcontractroute_link';";
     
+    const SQL_QUERY_FETCH_FANDV_TRUCK_LINKS = "SELECT `fvctl`.`truck_id`, `tr`.`fleetnum` FROM `udo_fandvcontracttruck_link` AS `fvctl` LEFT JOIN `udo_truck` AS `tr` ON (`tr`.`id` = `fvctl`.`truck_id`) WHERE `fandVContract_id` = %fandvid% ORDER BY `tr`.`fleetnum` ASC;";
+    
+    const SQL_QUERY_FETCH_FANDV_ROUTE_LINKS = "SELECT `fvcrl`.`route_id`, `fvcrl`.`leadKms`, CONCAT(`lf`.`name`, ' TO ', `lt`.`name`) AS `routeName` FROM `udo_fandvcontractroute_link` AS `fvcrl` LEFT JOIN `udo_route` AS `ro` ON (`ro`.`id` = `fvcrl`.`route_id`) LEFT JOIN `udo_location` AS `lf` ON (`lf`.`id` = `ro`.`locationFrom_id`) LEFT JOIN `udo_location` AS `lt` ON (`lt`.`id` = `ro`.`locationTo_id`) WHERE `fandVContract_id` = %fandvid% ORDER BY `lf`.`name` ASC;";
+    
     // : Variables
     protected $_config_file;
     
@@ -65,15 +69,12 @@ WHERE `cu`.`active` = 1 AND `cu`.`primaryCustomer` = 1 AND `cu`.`useFandVContrac
         'udo_fandvcontracttruck_link' => 911,
         'udo_fandvcontractroute_link' => 992
     );
-    protected $_obj_udo_fandvcontract_id;
-    protected $_udo_rate_id;
-    protected $_udo_rate_id;
+    
+    protected $_maxdb_object;
     
     protected $_errors = array();
     
     protected $_mode;
-
-    protected $_sqlfile = "fandvcontracts%Llinks.sql";
     
     private static $_usage = array(
         "PullFandVContractData - Pull F&V Contract data for current month and generate XLS file with the data",
@@ -111,10 +112,31 @@ WHERE `cu`.`active` = 1 AND `cu`.`primaryCustomer` = 1 AND `cu`.`useFandVContrac
     // : End
     
     // : Setters
+    
+    /**
+     * PullFandVContractData::setObjectRegIds()
+     * Fetch and tet object registry IDs from the MAX database
+     *
+     * @param return mixed
+     */
+    public function setObjectRegIds()
+    {
+    	if ($this->_maxdb_object) {
+    		
+    		$tmp = $this->_maxdb_object->queryDB(self::SQL_QUERY_GET_OBJ_UDO_RATES_ID);
+    		
+    		print(PHP_EOL . "Dump to screen the tmp sql query:" . PHP_EOL);
+    		var_dump($tmp);
+    		//$this->_objreg_ids['udo_rates'];
+    		exit();
+    		
+    	}
+    	return FALSE;
+    }
+    
     // : End
     
     // : Public functions
-    
     /**
      * PullFandVContractData::printErrors()
      * Print the errors to screen if there are any
@@ -483,10 +505,9 @@ WHERE `cu`.`active` = 1 AND `cu`.`primaryCustomer` = 1 AND `cu`.`useFandVContrac
             // Set the filename for the XLSX file to be generated
             $_excelFileName = (string) date("Y-m-d") . "FandVContracts";
             
-            $sqlData = new PullDataFromMySQLQuery($_config_data);
+            $this->_maxdb_object = new PullDataFromMySQLQuery($_config_data);
             
-            // : Fetch 
-            $sqlData->queryDB();
+            $this->setObjectRegIds();
             
 
             
