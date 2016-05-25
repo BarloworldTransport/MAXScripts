@@ -4,11 +4,11 @@ error_reporting(E_ALL);
 
 // : Includes
 
-include_once dirname(__FILE__) . DIRECTORY_SEPERATOR . 'classes' . DIRECTORY_SEPERATOR . ' PHPExcel.php';
+include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'PHPExcel.php';
 /**
  * PHPExcel_Writer_Excel2007
  */
-include dirname(__FILE__) . DIRECTORY_SEPERATOR . 'classes' . DIRECTORY_SEPERATOR . 'PHPExcel' . DIRECTORY_SEPERATOR . 'Writer' . DIRECTORY_SEPERATOR . 'Excel2007.php';
+include dirname(__FILE__) . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'PHPExcel' . DIRECTORY_SEPARATOR . 'Writer' . DIRECTORY_SEPARATOR . 'Excel2007.php';
 /**
  * MySQL query pull and return data class
  */
@@ -71,10 +71,16 @@ WHERE `cu`.`active` = 1 AND `cu`.`primaryCustomer` = 1 AND `cu`.`useFandVContrac
     );
     
     protected $_maxdb_object;
+
+    protected $_startDate;
+    
+    protected $_stopDate;
     
     protected $_errors = array();
     
     protected $_mode;
+
+    protected $_data;
     
     private static $_usage = array(
         "PullFandVContractData - Pull F&V Contract data for current month and generate XLS file with the data",
@@ -115,21 +121,36 @@ WHERE `cu`.`active` = 1 AND `cu`.`primaryCustomer` = 1 AND `cu`.`useFandVContrac
     
     /**
      * PullFandVContractData::setObjectRegIds()
-     * Fetch and tet object registry IDs from the MAX database
+     * Fetch and set object registry IDs from the MAX database
      *
-     * @param return mixed
+     * @param return bool
      */
     public function setObjectRegIds()
     {
     	if ($this->_maxdb_object) {
     		
-    		$tmp = $this->_maxdb_object->queryDB(self::SQL_QUERY_GET_OBJ_UDO_RATES_ID);
-    		
-    		print(PHP_EOL . "Dump to screen the tmp sql query:" . PHP_EOL);
-    		var_dump($tmp);
-    		//$this->_objreg_ids['udo_rates'];
-    		exit();
-    		
+    		$tmp = $this->_maxdb_object->getDataFromQuery(self::SQL_QUERY_GET_OBJ_UDO_RATES_ID);
+    	    if (is_array($tmp) && count($tmp) > 0 && isset($tmp[0]['ID'])) {
+                $this->_objreg_ids['udo_rates'] = $tmp[0]['ID'];   
+            }
+
+    		$tmp = $this->_maxdb_object->getDataFromQuery(self::SQL_QUERY_GET_OBJ_UDO_FANDVCONTRACT_ID);
+    	    if (is_array($tmp) && count($tmp) > 0 && isset($tmp[0]['ID'])) {
+                $this->_objreg_ids['udo_fandvcontract'] = $tmp[0]['ID'];   
+            }
+
+    		$tmp = $this->_maxdb_object->getDataFromQuery(self::SQL_QUERY_GET_OBJ_UDO_FANDVCONTRACT_TRUCKLINK_ID);
+    	    if (is_array($tmp) && count($tmp) > 0 && isset($tmp[0]['ID'])) {
+                $this->_objreg_ids['udo_fandvcontracttruck_link'] = $tmp[0]['ID'];   
+            }
+
+    		$tmp = $this->_maxdb_object->getDataFromQuery(self::SQL_QUERY_GET_OBJ_UDO_FANDVCONTRACT_ROUTELINK_ID);
+    	    if (is_array($tmp) && count($tmp) > 0 && isset($tmp[0]['ID'])) {
+                $this->_objreg_ids['udo_fandvcontractroute_link'] = $tmp[0]['ID'];   
+            }
+
+            return TRUE;
+	
     	}
     	return FALSE;
     }
@@ -470,15 +491,11 @@ WHERE `cu`.`active` = 1 AND `cu`.`primaryCustomer` = 1 AND `cu`.`useFandVContrac
             
             $_config_path_env = getenv(self::ENV_VAR);
             
-            if ($_config_path_env !== FALSE) {
-                    
-            } else {
+            if ($_config_path_env === FALSE) {
                 $this->printUsage(self::ERR_ENV_VAR_NOT_SET);
             }
             
             $_config_file = $_config_path_env . self::DS . self::CONFIG_FILE;
-            
-            if ($_config_file)
             
             $_config_data = $this->loadJSONFile($_config_file);
             
@@ -505,14 +522,51 @@ WHERE `cu`.`active` = 1 AND `cu`.`primaryCustomer` = 1 AND `cu`.`useFandVContrac
             // Set the filename for the XLSX file to be generated
             $_excelFileName = (string) date("Y-m-d") . "FandVContracts";
             
+            // Setup and initialize a connection the MAX database
             $this->_maxdb_object = new PullDataFromMySQLQuery($_config_data);
             
+            // Set object registry ids for objects to be used in SQL queries
             $this->setObjectRegIds();
-            
 
+            // : Set dates for the current month (UTC Times)
+            $d = new DateTime(date("Y-m-01 00:00:00"));
+            $d->modify('-2 hours');
+            $this->_startDate = $d->format('Y-m-d H:i:s');
+            $d->modify('+2 hours');
+            $d->modify('last day next month ');
+            $d->setTime(23, 59, 59);
+            $d->modify('-2 hours');
+            $this->_stopDate = $d->format('Y-m-d H:i:s');
+            // : End
+
+            // : Fetch F&V Contracts for the month
+
+            $_query = preg_replace('/%startDate%/', $this->_startDate, self::SQL_QUERY_FETCH_FANDV_CONTRACTS);
+            $_query = preg_replace('/%stopDate%/', $this->_stopDate, $_query);
+            $_queryData = $this->_maxdb_object->getDataFromQuery($_query);
+
+            // If query data result is not empty then store it
+            if (is_array($_queryData) && count($_queryData) > 0) {
+
+                $this->_data = (array) array();
+                
+                foreach($_queryData as $key1 => $value1) {
+
+                    foreach($value1 as $key2 => $value2) {
+                        $this->_data[$value1['id']][$key2] = $value2;
+                    }
+
+                }
+
+            }
+
+            print(PHP_EOL . 'Dump to screen data array:' . PHP_EOL);
+            var_dump($this->_data);
+            exit();
+            // : End
             
             // Take data and write into an excel spreadsheet
-            $this->writeExcelFile(dirname(__FILE__) . self::DS . $_excelFileName . ".xlsx", $consolidated);
+            //$this->writeExcelFile(dirname(__FILE__) . self::DS . $_excelFileName . ".xlsx", $consolidated);
             
         } catch (Exception $e) {
             $this->addErrorRecord("Caught exception: ", $e->getMessage(), "\n", __FUNCTION__, __CLASS__);
