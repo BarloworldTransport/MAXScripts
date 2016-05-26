@@ -7,7 +7,7 @@ require dirname(__FILE__) . '/MAX_API_Get.php';
  * MMS_Order_Util.php
  *
  * @package MMS_Order_Util
- * @author Clinton Wright <cwright@bwtrans.com>
+ * @author Clinton Wright <cwright@bwtrans.co.za>
  * @copyright 2015 onwards Barloworld Transport (Pty) Ltd
  * @license GNU GPL v2.0
  * @link https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
