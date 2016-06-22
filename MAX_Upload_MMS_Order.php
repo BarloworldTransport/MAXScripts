@@ -258,4 +258,3 @@ class MAX_Upload_MMS_Order
 }
 
 new MAX_Upload_MMS_Order();
-?>
