@@ -7,7 +7,7 @@ clia DataView setIcon objectRegistry="udo_TripLeg" type="ItemListDataView" name=
 clia DataView setPageSize objectRegistry="udo_TripLeg" type="ItemListDataView" name="Dedicated Invoice Report" pageSize="1000"
 clia DataView setNoRecordsMessage objectRegistry="udo_TripLeg" type="ItemListDataView" name="Dedicated Invoice Report" message="No records were returned."
 # Set the filter
-clia DataView setFilter objectRegistry="udo_TripLeg" type="ItemListDataView" name="Income for Export no calc" filter='truck_id = @InterimResult:truck_id AND ((loadingStarted = null AND loadingArrivalETA >= @InterimResult:beginDate AND loadingArrivalETA <= @InterimResult:endDate) OR (loadingStarted != null AND loadingStarted >= @InterimResult:beginDate AND loadingStarted <= @InterimResult:endDate)) AND (workshopTrip = "false" OR workshopTrip = null)'
+clia DataView setFilter objectRegistry="udo_TripLeg" type="ItemListDataView" name="Dedicated Invoice Report" filter='truck_id = @InterimResult:truck_id AND ((loadingStarted = null AND loadingArrivalETA >= @InterimResult:beginDate AND loadingArrivalETA <= @InterimResult:endDate) OR (loadingStarted != null AND loadingStarted >= @InterimResult:beginDate AND loadingStarted <= @InterimResult:endDate)) AND (workshopTrip = "false" OR workshopTrip = null)'
 # Set the report order
 clia DataView setOrderBy objectRegistry="udo_TripLeg" type="ItemListDataView" name="Dedicated Invoice Report" orderByField=trip_id orderByDirection=ASC
 # Add fields
