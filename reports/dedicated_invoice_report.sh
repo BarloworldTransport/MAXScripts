@@ -28,3 +28,6 @@ clia DataView addField objectRegistry=udo_TripLeg type=ItemListDataView name="De
 clia Report create name="Dedicated Invoice Report" objectRegistry=udo_TripLeg dataView="Dedicated Invoice Report" dataViewType=ItemListDataView primaryOwner="Admin" primaryOwnerCrud="Create, Read, Update, Delete" groupOwner="Admin" groupOwnerCrud="Read"
 # Set interim view
 clia Report setInterimDataView name="Dedicated Invoice Report" objectRegistry=DateRangeValue dataViewName="Trucks in a Fleet" type=ItemListDataView
+
+# 2016-07-25 -> additional field fleet number
+clia DataView addField objectRegistry=udo_TripLeg type=ItemListDataView name="Dedicated Invoice Report" label="Fleet Number" source="truck_id->fleetnum"
