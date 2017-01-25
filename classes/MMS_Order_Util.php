@@ -754,14 +754,14 @@ class MMS_Order_Util
                 
                 // Fetch CuRL errors
                 $_errors = $_api->getErrors();
-
+                
                 // Add CuRL logs to our logs
                 if ($_curl_logs && is_array($_curl_logs)) {
-                
+                    
                     $_log_str = (string) implode(',', $_curl_logs);
-                
+                    
                     $this->add_to_log(__FUNCTION__, "CURL LOGS: $_log_str" . NULL, __LINE__);
-                }                
+                }
                 
                 // Add CuRL error logs to our logs
                 if ($_errors && is_array($_errors)) {

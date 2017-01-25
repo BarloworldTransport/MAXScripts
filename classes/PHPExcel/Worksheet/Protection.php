@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHPExcel
  *
@@ -25,164 +26,149 @@
  * @version    1.7.8, 2012-10-12
  */
 
-
 /**
  * PHPExcel_Worksheet_Protection
  *
- * @category   PHPExcel
- * @package    PHPExcel_Worksheet
- * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @category PHPExcel
+ * @package PHPExcel_Worksheet
+ * @copyright Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Worksheet_Protection
 {
-	/**
-	 * Sheet
-	 *
-	 * @var boolean
-	 */
-	private $_sheet					= false;
 
-	/**
-	 * Objects
-	 *
-	 * @var boolean
-	 */
-	private $_objects				= false;
+    /**
+     * Sheet
+     *
+     * @var boolean
+     */
+    private $_sheet = false;
 
-	/**
-	 * Scenarios
-	 *
-	 * @var boolean
-	 */
-	private $_scenarios				= false;
+    /**
+     * Objects
+     *
+     * @var boolean
+     */
+    private $_objects = false;
 
-	/**
-	 * Format cells
-	 *
-	 * @var boolean
-	 */
-	private $_formatCells			= false;
+    /**
+     * Scenarios
+     *
+     * @var boolean
+     */
+    private $_scenarios = false;
 
-	/**
-	 * Format columns
-	 *
-	 * @var boolean
-	 */
-	private $_formatColumns			= false;
+    /**
+     * Format cells
+     *
+     * @var boolean
+     */
+    private $_formatCells = false;
 
-	/**
-	 * Format rows
-	 *
-	 * @var boolean
-	 */
-	private $_formatRows			= false;
+    /**
+     * Format columns
+     *
+     * @var boolean
+     */
+    private $_formatColumns = false;
 
-	/**
-	 * Insert columns
-	 *
-	 * @var boolean
-	 */
-	private $_insertColumns			= false;
+    /**
+     * Format rows
+     *
+     * @var boolean
+     */
+    private $_formatRows = false;
 
-	/**
-	 * Insert rows
-	 *
-	 * @var boolean
-	 */
-	private $_insertRows			= false;
+    /**
+     * Insert columns
+     *
+     * @var boolean
+     */
+    private $_insertColumns = false;
 
-	/**
-	 * Insert hyperlinks
-	 *
-	 * @var boolean
-	 */
-	private $_insertHyperlinks		= false;
+    /**
+     * Insert rows
+     *
+     * @var boolean
+     */
+    private $_insertRows = false;
 
-	/**
-	 * Delete columns
-	 *
-	 * @var boolean
-	 */
-	private $_deleteColumns			= false;
+    /**
+     * Insert hyperlinks
+     *
+     * @var boolean
+     */
+    private $_insertHyperlinks = false;
 
-	/**
-	 * Delete rows
-	 *
-	 * @var boolean
-	 */
-	private $_deleteRows			= false;
+    /**
+     * Delete columns
+     *
+     * @var boolean
+     */
+    private $_deleteColumns = false;
 
-	/**
-	 * Select locked cells
-	 *
-	 * @var boolean
-	 */
-	private $_selectLockedCells		= false;
+    /**
+     * Delete rows
+     *
+     * @var boolean
+     */
+    private $_deleteRows = false;
 
-	/**
-	 * Sort
-	 *
-	 * @var boolean
-	 */
-	private $_sort					= false;
+    /**
+     * Select locked cells
+     *
+     * @var boolean
+     */
+    private $_selectLockedCells = false;
 
-	/**
-	 * AutoFilter
-	 *
-	 * @var boolean
-	 */
-	private $_autoFilter			= false;
+    /**
+     * Sort
+     *
+     * @var boolean
+     */
+    private $_sort = false;
 
-	/**
-	 * Pivot tables
-	 *
-	 * @var boolean
-	 */
-	private $_pivotTables			= false;
+    /**
+     * AutoFilter
+     *
+     * @var boolean
+     */
+    private $_autoFilter = false;
 
-	/**
-	 * Select unlocked cells
-	 *
-	 * @var boolean
-	 */
-	private $_selectUnlockedCells	= false;
+    /**
+     * Pivot tables
+     *
+     * @var boolean
+     */
+    private $_pivotTables = false;
 
-	/**
-	 * Password
-	 *
-	 * @var string
-	 */
-	private $_password				= '';
+    /**
+     * Select unlocked cells
+     *
+     * @var boolean
+     */
+    private $_selectUnlockedCells = false;
+
+    /**
+     * Password
+     *
+     * @var string
+     */
+    private $_password = '';
 
     /**
      * Create a new PHPExcel_Worksheet_Protection
      */
     public function __construct()
-    {
-    }
+    {}
 
     /**
      * Is some sort of protection enabled?
      *
      * @return boolean
      */
-    function isProtectionEnabled() {
-    	return 	$this->_sheet ||
-				$this->_objects ||
-				$this->_scenarios ||
-				$this->_formatCells ||
-				$this->_formatColumns ||
-				$this->_formatRows ||
-				$this->_insertColumns ||
-				$this->_insertRows ||
-				$this->_insertHyperlinks ||
-				$this->_deleteColumns ||
-				$this->_deleteRows ||
-				$this->_selectLockedCells ||
-				$this->_sort ||
-				$this->_autoFilter ||
-				$this->_pivotTables ||
-				$this->_selectUnlockedCells;
+    function isProtectionEnabled()
+    {
+        return $this->_sheet || $this->_objects || $this->_scenarios || $this->_formatCells || $this->_formatColumns || $this->_formatRows || $this->_insertColumns || $this->_insertRows || $this->_insertHyperlinks || $this->_deleteColumns || $this->_deleteRows || $this->_selectLockedCells || $this->_sort || $this->_autoFilter || $this->_pivotTables || $this->_selectUnlockedCells;
     }
 
     /**
@@ -190,19 +176,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getSheet() {
-    	return $this->_sheet;
+    function getSheet()
+    {
+        return $this->_sheet;
     }
 
     /**
      * Set Sheet
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setSheet($pValue = false) {
-    	$this->_sheet = $pValue;
-    	return $this;
+    function setSheet($pValue = false)
+    {
+        $this->_sheet = $pValue;
+        return $this;
     }
 
     /**
@@ -210,19 +198,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getObjects() {
-    	return $this->_objects;
+    function getObjects()
+    {
+        return $this->_objects;
     }
 
     /**
      * Set Objects
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setObjects($pValue = false) {
-    	$this->_objects = $pValue;
-    	return $this;
+    function setObjects($pValue = false)
+    {
+        $this->_objects = $pValue;
+        return $this;
     }
 
     /**
@@ -230,19 +220,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getScenarios() {
-    	return $this->_scenarios;
+    function getScenarios()
+    {
+        return $this->_scenarios;
     }
 
     /**
      * Set Scenarios
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setScenarios($pValue = false) {
-    	$this->_scenarios = $pValue;
-    	return $this;
+    function setScenarios($pValue = false)
+    {
+        $this->_scenarios = $pValue;
+        return $this;
     }
 
     /**
@@ -250,19 +242,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getFormatCells() {
-    	return $this->_formatCells;
+    function getFormatCells()
+    {
+        return $this->_formatCells;
     }
 
     /**
      * Set FormatCells
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setFormatCells($pValue = false) {
-    	$this->_formatCells = $pValue;
-    	return $this;
+    function setFormatCells($pValue = false)
+    {
+        $this->_formatCells = $pValue;
+        return $this;
     }
 
     /**
@@ -270,19 +264,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getFormatColumns() {
-    	return $this->_formatColumns;
+    function getFormatColumns()
+    {
+        return $this->_formatColumns;
     }
 
     /**
      * Set FormatColumns
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setFormatColumns($pValue = false) {
-    	$this->_formatColumns = $pValue;
-    	return $this;
+    function setFormatColumns($pValue = false)
+    {
+        $this->_formatColumns = $pValue;
+        return $this;
     }
 
     /**
@@ -290,19 +286,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getFormatRows() {
-    	return $this->_formatRows;
+    function getFormatRows()
+    {
+        return $this->_formatRows;
     }
 
     /**
      * Set FormatRows
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setFormatRows($pValue = false) {
-    	$this->_formatRows = $pValue;
-    	return $this;
+    function setFormatRows($pValue = false)
+    {
+        $this->_formatRows = $pValue;
+        return $this;
     }
 
     /**
@@ -310,19 +308,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getInsertColumns() {
-    	return $this->_insertColumns;
+    function getInsertColumns()
+    {
+        return $this->_insertColumns;
     }
 
     /**
      * Set InsertColumns
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setInsertColumns($pValue = false) {
-    	$this->_insertColumns = $pValue;
-    	return $this;
+    function setInsertColumns($pValue = false)
+    {
+        $this->_insertColumns = $pValue;
+        return $this;
     }
 
     /**
@@ -330,19 +330,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getInsertRows() {
-    	return $this->_insertRows;
+    function getInsertRows()
+    {
+        return $this->_insertRows;
     }
 
     /**
      * Set InsertRows
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setInsertRows($pValue = false) {
-    	$this->_insertRows = $pValue;
-    	return $this;
+    function setInsertRows($pValue = false)
+    {
+        $this->_insertRows = $pValue;
+        return $this;
     }
 
     /**
@@ -350,19 +352,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getInsertHyperlinks() {
-    	return $this->_insertHyperlinks;
+    function getInsertHyperlinks()
+    {
+        return $this->_insertHyperlinks;
     }
 
     /**
      * Set InsertHyperlinks
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setInsertHyperlinks($pValue = false) {
-    	$this->_insertHyperlinks = $pValue;
-    	return $this;
+    function setInsertHyperlinks($pValue = false)
+    {
+        $this->_insertHyperlinks = $pValue;
+        return $this;
     }
 
     /**
@@ -370,19 +374,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getDeleteColumns() {
-    	return $this->_deleteColumns;
+    function getDeleteColumns()
+    {
+        return $this->_deleteColumns;
     }
 
     /**
      * Set DeleteColumns
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setDeleteColumns($pValue = false) {
-    	$this->_deleteColumns = $pValue;
-    	return $this;
+    function setDeleteColumns($pValue = false)
+    {
+        $this->_deleteColumns = $pValue;
+        return $this;
     }
 
     /**
@@ -390,19 +396,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getDeleteRows() {
-    	return $this->_deleteRows;
+    function getDeleteRows()
+    {
+        return $this->_deleteRows;
     }
 
     /**
      * Set DeleteRows
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setDeleteRows($pValue = false) {
-    	$this->_deleteRows = $pValue;
-    	return $this;
+    function setDeleteRows($pValue = false)
+    {
+        $this->_deleteRows = $pValue;
+        return $this;
     }
 
     /**
@@ -410,19 +418,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getSelectLockedCells() {
-    	return $this->_selectLockedCells;
+    function getSelectLockedCells()
+    {
+        return $this->_selectLockedCells;
     }
 
     /**
      * Set SelectLockedCells
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setSelectLockedCells($pValue = false) {
-    	$this->_selectLockedCells = $pValue;
-    	return $this;
+    function setSelectLockedCells($pValue = false)
+    {
+        $this->_selectLockedCells = $pValue;
+        return $this;
     }
 
     /**
@@ -430,19 +440,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getSort() {
-    	return $this->_sort;
+    function getSort()
+    {
+        return $this->_sort;
     }
 
     /**
      * Set Sort
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setSort($pValue = false) {
-    	$this->_sort = $pValue;
-    	return $this;
+    function setSort($pValue = false)
+    {
+        $this->_sort = $pValue;
+        return $this;
     }
 
     /**
@@ -450,19 +462,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getAutoFilter() {
-    	return $this->_autoFilter;
+    function getAutoFilter()
+    {
+        return $this->_autoFilter;
     }
 
     /**
      * Set AutoFilter
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setAutoFilter($pValue = false) {
-    	$this->_autoFilter = $pValue;
-    	return $this;
+    function setAutoFilter($pValue = false)
+    {
+        $this->_autoFilter = $pValue;
+        return $this;
     }
 
     /**
@@ -470,19 +484,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getPivotTables() {
-    	return $this->_pivotTables;
+    function getPivotTables()
+    {
+        return $this->_pivotTables;
     }
 
     /**
      * Set PivotTables
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setPivotTables($pValue = false) {
-    	$this->_pivotTables = $pValue;
-    	return $this;
+    function setPivotTables($pValue = false)
+    {
+        $this->_pivotTables = $pValue;
+        return $this;
     }
 
     /**
@@ -490,19 +506,21 @@ class PHPExcel_Worksheet_Protection
      *
      * @return boolean
      */
-    function getSelectUnlockedCells() {
-    	return $this->_selectUnlockedCells;
+    function getSelectUnlockedCells()
+    {
+        return $this->_selectUnlockedCells;
     }
 
     /**
      * Set SelectUnlockedCells
      *
-     * @param boolean $pValue
+     * @param boolean $pValue            
      * @return PHPExcel_Worksheet_Protection
      */
-    function setSelectUnlockedCells($pValue = false) {
-    	$this->_selectUnlockedCells = $pValue;
-    	return $this;
+    function setSelectUnlockedCells($pValue = false)
+    {
+        $this->_selectUnlockedCells = $pValue;
+        return $this;
     }
 
     /**
@@ -510,36 +528,40 @@ class PHPExcel_Worksheet_Protection
      *
      * @return string
      */
-    function getPassword() {
-    	return $this->_password;
+    function getPassword()
+    {
+        return $this->_password;
     }
 
     /**
      * Set Password
      *
-     * @param string 	$pValue
-     * @param boolean 	$pAlreadyHashed If the password has already been hashed, set this to true
+     * @param string $pValue            
+     * @param boolean $pAlreadyHashed
+     *            If the password has already been hashed, set this to true
      * @return PHPExcel_Worksheet_Protection
      */
-    function setPassword($pValue = '', $pAlreadyHashed = false) {
-    	if (!$pAlreadyHashed) {
-    		$pValue = PHPExcel_Shared_PasswordHasher::hashPassword($pValue);
-    	}
-		$this->_password = $pValue;
-		return $this;
+    function setPassword($pValue = '', $pAlreadyHashed = false)
+    {
+        if (! $pAlreadyHashed) {
+            $pValue = PHPExcel_Shared_PasswordHasher::hashPassword($pValue);
+        }
+        $this->_password = $pValue;
+        return $this;
     }
 
-	/**
-	 * Implement PHP __clone to create a deep clone, not just a shallow copy.
-	 */
-	public function __clone() {
-		$vars = get_object_vars($this);
-		foreach ($vars as $key => $value) {
-			if (is_object($value)) {
-				$this->$key = clone $value;
-			} else {
-				$this->$key = $value;
-			}
-		}
-	}
+    /**
+     * Implement PHP __clone to create a deep clone, not just a shallow copy.
+     */
+    public function __clone()
+    {
+        $vars = get_object_vars($this);
+        foreach ($vars as $key => $value) {
+            if (is_object($value)) {
+                $this->$key = clone $value;
+            } else {
+                $this->$key = $value;
+            }
+        }
+    }
 }

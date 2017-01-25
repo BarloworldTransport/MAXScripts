@@ -143,9 +143,8 @@ class PullDataFromMySQLQuery
                 if ($replace != FALSE) {
                     $sqlquery = preg_replace($pattern, $replacement, $sqlquery);
                 }
-
-                $_data = $this->queryDB($sqlquery);
                 
+                $_data = $this->queryDB($sqlquery);
             } else {
                 $_errors[] = "File not found: " . $_file;
             }
@@ -172,8 +171,8 @@ class PullDataFromMySQLQuery
     /**
      * PullDataFromMySQLQuery::__construct()
      * Class constructor
-     * 
-     * @param array $_config_data
+     *
+     * @param array $_config_data            
      */
     public function __construct($_config_data)
     {

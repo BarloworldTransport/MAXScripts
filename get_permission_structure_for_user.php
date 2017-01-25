@@ -31,38 +31,40 @@ class get_permission_structure_for_user
     const TEST_URL = "http://max.mobilize.biz";
 
     const INI_FILE = "app_data.ini";
-	
-	const SH_HEADER = "#!/bin/bash";
 
+    const SH_HEADER = "#!/bin/bash";
+    
     // : MAX clia command to update and delete all groups for user memberships
     
     /*
      * clia deleteUsersMembershipFromAllGroups email=
      * clia addUserToGroups email= groups=<group names comma seperated>
      */
-     
     const MAX_CLIA_DEL_USER_GROUPS = "\$clia deleteUsersMembershipFromAllGroups email=%e";
+
     const MAX_CLIA_ADD_USER_TO_GROUP = "\$clia addUserToGroups email=%e groups=%g";
-        
+    
     // : End
     // : MAX clia command to update dataview permissions using dataview id
     const MAX_CLIA_DATAVIEW = "\$clia DataView setPermissionsForId dataViewId=%id primaryOwner='%po' primaryOwnerCrud=%poc groupOwner='%go' groupOwnerCrud=%goc";
     // : End
     // : MAX clia commands to update permissions for objectCrudActionProcess entries
     const MAX_CLIA_OBJ_PROCESS = "\$clia ObjectRegistry setProcessOwners objectRegistry=%ob handle=%hd owner='%on' ownerCrud=Create,Read,Update,Delete group='%gn' groupCrud=%gc";
-    
+
     const MAX_CLIA_OBJ_POG = "\$clia ObjectRegistry setObjectPrimaryOwnerGroup objectRegistry=%o group='%g'";
+
     const MAX_CLIA_OBJ_PCRUD = "\$clia ObjectRegistry setObjectPrimaryOwnerCrud objectRegistry=%o crud=%c";
+
     const MAX_CLIA_OBJ_GOG = "\$clia ObjectRegistry setObjectGroupOwnerGroup objectRegistry=%o group='%g'";
+
     const MAX_CLIA_OBJ_GCRUD = "\$clia ObjectRegistry setObjectGroupOwnerCrud objectRegistry=%o crud=%c";
     // : End
-
     const FILE_NOT_FOUND = "ERROR: File not found: %s";
-    
+
     const ERROR_REQ_ARG_NOT_FOUND = "ERROR: The required options was not given using the -t switch. See usage below:";
-	
-	const ERROR_INVALID_ARG = "ERROR: The argument given for option `t` is invalid. Please see below:";
-    
+
+    const ERROR_INVALID_ARG = "ERROR: The argument given for option `t` is invalid. Please see below:";
+
     const ERROR_NO_ARG_GIVEN = "ERROR: You did not provide any options using switches and the -t switch options is required. See usage below:";
     // : End
     
@@ -80,25 +82,25 @@ class get_permission_structure_for_user
         "Example:",
         "",
         "get_permission_structure_for_user.php -m mysql",
-        "",
+        ""
     );
-    
+
     private static $_modes = array(
         "mysql",
-		"runq",
+        "runq"
     );
-	
-	private $_sql_queries = array(
-		"user_group_role_links" => "select g.name as groupName, pg.name as playedByGroupName 
+
+    private $_sql_queries = array(
+        "user_group_role_links" => "select g.name as groupName, pg.name as playedByGroupName 
 				from group_role_link as grl 
 				left join `group` as g on (g.id=grl.group_id) 
 				left join `group` as pg on (pg.id=grl.played_by_group_id) 
 				where g.name ='%s';",
-		"find_user_by_email" => "select CONCAT(p.first_name, ' ', p.last_name) as fullname, pu.status, pu.personal_group_id 
+        "find_user_by_email" => "select CONCAT(p.first_name, ' ', p.last_name) as fullname, pu.status, pu.personal_group_id 
 				from person as p 
 				left join permissionuser as pu on (pu.person_id=p.id) 
 				where p.email like '%s';"
-	);
+    );
 
     protected $_mode;
 
@@ -117,8 +119,8 @@ class get_permission_structure_for_user
     protected $_errdir;
 
     protected $_errors = array();
-	
-	protected $_records = array();
+
+    protected $_records = array();
 
     protected $_tmp;
     // : End
@@ -160,12 +162,7 @@ class get_permission_structure_for_user
                             $this->_maxurl = self::TEST_URL;
                     }
                     
-					if (array_key_exists('m', $_options)) {
-						
-					} else {
-						
-					}
-                    
+                    if (array_key_exists('m', $_options)) {} else {}
                 } else {
                     $this->printUsage("The correct data is not present in" . self::INI_FILE . ". Please confirm you have the following fields present: username, password, proxyip, datadir, errordir and mode");
                 }
@@ -173,7 +170,7 @@ class get_permission_structure_for_user
                 $this->printUsage(self::ERROR_REQ_ARG_NOT_FOUND);
             }
         } else {
-            $this->printUsage(self::ERROR_NO_ARG_GIVEN);     
+            $this->printUsage(self::ERROR_NO_ARG_GIVEN);
         }
     }
     // : End
@@ -195,16 +192,15 @@ class get_permission_structure_for_user
             
             // If string print on its own line
             print($_msg . PHP_EOL);
-            
-        } else if ($_msg && is_array($_msg)) {
-            
-            // If array loop each item and print each item on its own line
-            foreach($_msg as $_msg_lineitem) {
+        } else 
+            if ($_msg && is_array($_msg)) {
                 
-                print($_msg_lineitem . PHP_EOL);
-                
+                // If array loop each item and print each item on its own line
+                foreach ($_msg as $_msg_lineitem) {
+                    
+                    print($_msg_lineitem . PHP_EOL);
+                }
             }
-        }
         // : End
         
         // Print a blank line and then beginning printing message
@@ -221,50 +217,47 @@ class get_permission_structure_for_user
         // Terminate
         exit();
     }
-	
-    /**
-     * get_permission_structure_for_user::get_ocap_permissions_for_user()
-     * Check if user exists and if so return data from DB for the user
-	 * @param string: $_email
-     */	
-	private function get_user($_email) {
-		if (is_string($_email) && $_email) {
-			
-		}
-	}
 
     /**
      * get_permission_structure_for_user::get_ocap_permissions_for_user()
-     * Get permissions from objectcrudactionprocess for the user 
-     */	
-	private function get_ocap_permissions_for_user() {
-		
-	}
-	
-	/**
+     * Check if user exists and if so return data from DB for the user
+     * 
+     * @param string: $_email            
+     */
+    private function get_user($_email)
+    {
+        if (is_string($_email) && $_email) {}
+    }
+
+    /**
+     * get_permission_structure_for_user::get_ocap_permissions_for_user()
+     * Get permissions from objectcrudactionprocess for the user
+     */
+    private function get_ocap_permissions_for_user()
+    {}
+
+    /**
      * get_permission_structure_for_user::get_object_registry_permissions_for_user()
-     * Get permissions from objectregistry for the user 
-     */	
-	private function get_object_registry_permissions_for_user() {
-		
-	}
-	
+     * Get permissions from objectregistry for the user
+     */
+    private function get_object_registry_permissions_for_user()
+    {}
+
     /**
      * get_permission_structure_for_user::get_tab_permissions_for_user()
-     * Get permissions from tab for the user 
-     */	
-	private function get_tab_permissions_for_user() {
-		
-	}
-	
-	/**
+     * Get permissions from tab for the user
+     */
+    private function get_tab_permissions_for_user()
+    {}
+
+    /**
      * get_permission_structure_for_user::get_all_groups_user_is_linked_too()
      * Get all groups that the user is linked too
-	 * @param string: $_recursive
-     */	
-	private function get_groups_user_is_linked($_recursive = null) {
-		
-	}
+     * 
+     * @param string: $_recursive            
+     */
+    private function get_groups_user_is_linked($_recursive = null)
+    {}
 
     /**
      * get_permission_structure_for_user::importData()
@@ -312,8 +305,8 @@ class get_permission_structure_for_user
         $this->_errors[$_erCount + 1]["record"] = $_record;
         $this->_errors[$_erCount + 1]["method"] = $_process;
     }
-	
-	/**
+
+    /**
      * get_permission_structure_for_user::addRecordPass($_msg, $_record, $_process)
      * Add successful record processing to records array
      *

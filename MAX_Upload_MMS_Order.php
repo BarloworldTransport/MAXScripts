@@ -1,7 +1,8 @@
 #!/usr/bin/php
 <?php
 require dirname(__FILE__) . '/classes/FileParser.php';
-require dirname(__FILE__) . '/classes/MAX_API_Get.php' ;
+require dirname(__FILE__) . '/classes/MAX_API_Get.php';
+
 /**
  * MAX_Upload_MMS_Order.php
  *
@@ -24,18 +25,24 @@ class MAX_Upload_MMS_Order
 {
     
     // : Constants
-	
     const DS = DIRECTORY_SEPARATOR;
+
     const LIVE_URL = "https://login.max.bwtsgroup.com";
+
     const TEST_URL = "http://max.mobilize.biz";
+
     const INI_FILE = "app_data.ini";
-	
-	const ERROR_P_ARG_REQUIRED = "ERROR: -t objectinstances requires -p switch to be given. See below usage of the command for objectinstances.";
-	const FILE_NOT_FOUND = "ERROR: File not found: %s";
+
+    const ERROR_P_ARG_REQUIRED = "ERROR: -t objectinstances requires -p switch to be given. See below usage of the command for objectinstances.";
+
+    const FILE_NOT_FOUND = "ERROR: File not found: %s";
+
     const ERROR_REQ_ARG_NOT_FOUND = "ERROR: The required options was not given using the -t switch. See usage below:";
-	const ERROR_INVALID_ARG = "ERROR: The argument given for option `t` is invalid. Please see below:";
-	const ERROR_NO_ARG_GIVEN = "ERROR: You did not provide any options using switches and the -t switch options is required. See usage below:";
-	
+
+    const ERROR_INVALID_ARG = "ERROR: The argument given for option `t` is invalid. Please see below:";
+
+    const ERROR_NO_ARG_GIVEN = "ERROR: You did not provide any options using switches and the -t switch options is required. See usage below:";
+    
     // : End
     
     // : Variables:
@@ -65,16 +72,16 @@ class MAX_Upload_MMS_Order
         "",
         "Usage examples:",
         "",
-		"Generate Accepted and Delivered MMS order states. Upload Accepted Order to test and save orders to default folder:",
+        "Generate Accepted and Delivered MMS order states. Upload Accepted Order to test and save orders to default folder:",
         "MAX_Upload_MMS_Order.php -m 'test' -s 'aD'",
         "",
-		"Generate Accepted and Disbanded MMS order states. Upload Accepted Order to test and save orders to specified folder:",
+        "Generate Accepted and Disbanded MMS order states. Upload Accepted Order to test and save orders to specified folder:",
         "MAX_Upload_MMS_Order.php -m 'test' -s 'aD' -d '/dir/to/folder/'",
         "",
         "Uploaded MMS order xml file to MAX Test:",
         "MAX_Upload_MMS_Order.php -m 'test' -f '/path/to/file.xml'",
         "",
-		"Generate Accepted MMS order state. Do not upload Accepted Order to test and save orders to default folder:",
+        "Generate Accepted MMS order state. Do not upload Accepted Order to test and save orders to default folder:",
         "MAX_Upload_MMS_Order.php -m 'test' -p 'false'",
         ""
     );
@@ -94,14 +101,14 @@ class MAX_Upload_MMS_Order
     protected $_errdir;
 
     protected $_errors = array();
-	
-	protected $_records = array();
+
+    protected $_records = array();
 
     protected $_tmp;
 
     protected $_file;
-	// : End
-
+    // : End
+    
     // : Magic Functions
     /**
      * MAX_Upload_MMS_Order::__construct()
@@ -132,19 +139,17 @@ class MAX_Upload_MMS_Order
                     $this->_errdir = $data["errordir"];
                     
                     // : If file option is passed at command line using the -f switch the use the supplied filename else use file in app_data.ini config file
-					if (array_key_exists('f', $_options) && !array_key_exists('p', $_options)) {
+                    if (array_key_exists('f', $_options) && ! array_key_exists('p', $_options)) {
                         
                         if (is_string($_options["f"])) {
                             
                             $this->_file = $_options["f"];
-                            
                         }
                     } else {
                         
                         $this->_file = $data['file1'];
-                        
                     }
-					
+                    
                     // : End
                     
                     switch ($this->_mode) {
@@ -156,7 +161,6 @@ class MAX_Upload_MMS_Order
                     }
                     
                     $this->_data = $this->importData();
-                    
                 } else {
                     $this->printUsage("The correct data is not present in" . self::INI_FILE . ". Please confirm you have the following fields present: username, password, proxyip, datadir, errordir and mode");
                 }
@@ -164,7 +168,7 @@ class MAX_Upload_MMS_Order
                 $this->printUsage(self::ERROR_REQ_ARG_NOT_FOUND);
             }
         } else {
-            $this->printUsage(self::ERROR_NO_ARG_GIVEN);     
+            $this->printUsage(self::ERROR_NO_ARG_GIVEN);
         }
     }
     // : End
@@ -186,16 +190,15 @@ class MAX_Upload_MMS_Order
             
             // If string print on its own line
             print($_msg . PHP_EOL);
-            
-        } else if ($_msg && is_array($_msg)) {
-            
-            // If array loop each item and print each item on its own line
-            foreach($_msg as $_msg_lineitem) {
+        } else 
+            if ($_msg && is_array($_msg)) {
                 
-                print($_msg_lineitem . PHP_EOL);
-                
+                // If array loop each item and print each item on its own line
+                foreach ($_msg as $_msg_lineitem) {
+                    
+                    print($_msg_lineitem . PHP_EOL);
+                }
             }
-        }
         // : End
         
         // Print a blank line and then beginning printing message

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHPExcel
  *
@@ -25,91 +26,95 @@
  * @version    1.7.8, 2012-10-12
  */
 
-
 /**
  * PHPExcel_Comment
  *
- * @category   PHPExcel
- * @package    PHPExcel
- * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @category PHPExcel
+ * @package PHPExcel
+ * @copyright Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Comment implements PHPExcel_IComparable
 {
-	/**
-	 * Author
-	 *
-	 * @var string
-	 */
-	private $_author;
 
-	/**
-	 * Rich text comment
-	 *
-	 * @var PHPExcel_RichText
-	 */
-	private $_text;
+    /**
+     * Author
+     *
+     * @var string
+     */
+    private $_author;
 
-	/**
-	 * Comment width (CSS style, i.e. XXpx or YYpt)
-	 *
-	 * @var string
-	 */
-	private $_width = '96pt';
+    /**
+     * Rich text comment
+     *
+     * @var PHPExcel_RichText
+     */
+    private $_text;
 
-	/**
-	 * Left margin (CSS style, i.e. XXpx or YYpt)
-	 *
-	 * @var string
-	 */
-	private $_marginLeft = '59.25pt';
+    /**
+     * Comment width (CSS style, i.e.
+     * XXpx or YYpt)
+     *
+     * @var string
+     */
+    private $_width = '96pt';
 
-	/**
-	 * Top margin (CSS style, i.e. XXpx or YYpt)
-	 *
-	 * @var string
-	 */
-	private $_marginTop = '1.5pt';
+    /**
+     * Left margin (CSS style, i.e.
+     * XXpx or YYpt)
+     *
+     * @var string
+     */
+    private $_marginLeft = '59.25pt';
 
-	/**
-	 * Visible
-	 *
-	 * @var boolean
-	 */
-	private $_visible = false;
+    /**
+     * Top margin (CSS style, i.e.
+     * XXpx or YYpt)
+     *
+     * @var string
+     */
+    private $_marginTop = '1.5pt';
 
-	/**
-	 * Comment height (CSS style, i.e. XXpx or YYpt)
-	 *
-	 * @var string
-	 */
-	private $_height = '55.5pt';
+    /**
+     * Visible
+     *
+     * @var boolean
+     */
+    private $_visible = false;
 
-	/**
-	 * Comment fill color
-	 *
-	 * @var PHPExcel_Style_Color
-	 */
-	private $_fillColor;
+    /**
+     * Comment height (CSS style, i.e.
+     * XXpx or YYpt)
+     *
+     * @var string
+     */
+    private $_height = '55.5pt';
 
-	/**
-	 * Alignment
-	 *
-	 * @var string
-	 */
-	private $_alignment;
+    /**
+     * Comment fill color
+     *
+     * @var PHPExcel_Style_Color
+     */
+    private $_fillColor;
+
+    /**
+     * Alignment
+     *
+     * @var string
+     */
+    private $_alignment;
 
     /**
      * Create a new PHPExcel_Comment
      *
-     * @throws	Exception
+     * @throws Exception
      */
     public function __construct()
     {
-    	// Initialise variables
-    	$this->_author		= 'Author';
-    	$this->_text		= new PHPExcel_RichText();
-    	$this->_fillColor	= new PHPExcel_Style_Color('FFFFFFE1');
-		$this->_alignment	= PHPExcel_Style_Alignment::HORIZONTAL_GENERAL;
+        // Initialise variables
+        $this->_author = 'Author';
+        $this->_text = new PHPExcel_RichText();
+        $this->_fillColor = new PHPExcel_Style_Color('FFFFFFE1');
+        $this->_alignment = PHPExcel_Style_Alignment::HORIZONTAL_GENERAL;
     }
 
     /**
@@ -117,117 +122,137 @@ class PHPExcel_Comment implements PHPExcel_IComparable
      *
      * @return string
      */
-    public function getAuthor() {
-    	return $this->_author;
+    public function getAuthor()
+    {
+        return $this->_author;
     }
 
     /**
      * Set Author
      *
-     * @param string $pValue
+     * @param string $pValue            
      * @return PHPExcel_Comment
      */
-	public function setAuthor($pValue = '') {
-		$this->_author = $pValue;
-		return $this;
-	}
+    public function setAuthor($pValue = '')
+    {
+        $this->_author = $pValue;
+        return $this;
+    }
 
     /**
      * Get Rich text comment
      *
      * @return PHPExcel_RichText
      */
-    public function getText() {
-    	return $this->_text;
+    public function getText()
+    {
+        return $this->_text;
     }
 
     /**
      * Set Rich text comment
      *
-     * @param PHPExcel_RichText $pValue
+     * @param PHPExcel_RichText $pValue            
      * @return PHPExcel_Comment
      */
-    public function setText(PHPExcel_RichText $pValue) {
-    	$this->_text = $pValue;
-    	return $this;
+    public function setText(PHPExcel_RichText $pValue)
+    {
+        $this->_text = $pValue;
+        return $this;
     }
 
     /**
-     * Get comment width (CSS style, i.e. XXpx or YYpt)
+     * Get comment width (CSS style, i.e.
+     * XXpx or YYpt)
      *
      * @return string
      */
-    public function getWidth() {
+    public function getWidth()
+    {
         return $this->_width;
     }
 
     /**
-     * Set comment width (CSS style, i.e. XXpx or YYpt)
+     * Set comment width (CSS style, i.e.
+     * XXpx or YYpt)
      *
-     * @param string $value
+     * @param string $value            
      * @return PHPExcel_Comment
      */
-    public function setWidth($value = '96pt') {
+    public function setWidth($value = '96pt')
+    {
         $this->_width = $value;
         return $this;
     }
 
     /**
-     * Get comment height (CSS style, i.e. XXpx or YYpt)
+     * Get comment height (CSS style, i.e.
+     * XXpx or YYpt)
      *
      * @return string
      */
-    public function getHeight() {
+    public function getHeight()
+    {
         return $this->_height;
     }
 
     /**
-     * Set comment height (CSS style, i.e. XXpx or YYpt)
+     * Set comment height (CSS style, i.e.
+     * XXpx or YYpt)
      *
-     * @param string $value
+     * @param string $value            
      * @return PHPExcel_Comment
      */
-    public function setHeight($value = '55.5pt') {
+    public function setHeight($value = '55.5pt')
+    {
         $this->_height = $value;
         return $this;
     }
 
     /**
-     * Get left margin (CSS style, i.e. XXpx or YYpt)
+     * Get left margin (CSS style, i.e.
+     * XXpx or YYpt)
      *
      * @return string
      */
-    public function getMarginLeft() {
+    public function getMarginLeft()
+    {
         return $this->_marginLeft;
     }
 
     /**
-     * Set left margin (CSS style, i.e. XXpx or YYpt)
+     * Set left margin (CSS style, i.e.
+     * XXpx or YYpt)
      *
-     * @param string $value
+     * @param string $value            
      * @return PHPExcel_Comment
      */
-    public function setMarginLeft($value = '59.25pt') {
+    public function setMarginLeft($value = '59.25pt')
+    {
         $this->_marginLeft = $value;
         return $this;
     }
 
     /**
-     * Get top margin (CSS style, i.e. XXpx or YYpt)
+     * Get top margin (CSS style, i.e.
+     * XXpx or YYpt)
      *
      * @return string
      */
-    public function getMarginTop() {
+    public function getMarginTop()
+    {
         return $this->_marginTop;
     }
 
     /**
-     * Set top margin (CSS style, i.e. XXpx or YYpt)
+     * Set top margin (CSS style, i.e.
+     * XXpx or YYpt)
      *
-     * @param string $value
+     * @param string $value            
      * @return PHPExcel_Comment
      */
-    public function setMarginTop($value = '1.5pt') {
+    public function setMarginTop($value = '1.5pt')
+    {
         $this->_marginTop = $value;
         return $this;
     }
@@ -237,17 +262,19 @@ class PHPExcel_Comment implements PHPExcel_IComparable
      *
      * @return boolean
      */
-    public function getVisible() {
+    public function getVisible()
+    {
         return $this->_visible;
     }
 
     /**
      * Set comment default visibility
      *
-     * @param boolean $value
+     * @param boolean $value            
      * @return PHPExcel_Comment
      */
-    public function setVisible($value = false) {
+    public function setVisible($value = false)
+    {
         $this->_visible = $value;
         return $this;
     }
@@ -257,19 +284,21 @@ class PHPExcel_Comment implements PHPExcel_IComparable
      *
      * @return PHPExcel_Style_Color
      */
-    public function getFillColor() {
+    public function getFillColor()
+    {
         return $this->_fillColor;
     }
 
     /**
      * Set Alignment
      *
-     * @param string $pValue
+     * @param string $pValue            
      * @return PHPExcel_Comment
      */
-    public function setAlignment($pValue = PHPExcel_Style_Alignment::HORIZONTAL_GENERAL) {
-		$this->_alignment = $pValue;
-		return $this;
+    public function setAlignment($pValue = PHPExcel_Style_Alignment::HORIZONTAL_GENERAL)
+    {
+        $this->_alignment = $pValue;
+        return $this;
     }
 
     /**
@@ -277,41 +306,33 @@ class PHPExcel_Comment implements PHPExcel_IComparable
      *
      * @return string
      */
-    public function getAlignment() {
-		return $this->_alignment;
+    public function getAlignment()
+    {
+        return $this->_alignment;
     }
 
-	/**
-	 * Get hash code
-	 *
-	 * @return string	Hash code
-	 */
-	public function getHashCode() {
-    	return md5(
-    		  $this->_author
-    		. $this->_text->getHashCode()
-    		. $this->_width
-    		. $this->_height
-    		. $this->_marginLeft
-    		. $this->_marginTop
-    		. ($this->_visible ? 1 : 0)
-    		. $this->_fillColor->getHashCode()
-    		. $this->_alignment
-    		. __CLASS__
-    	);
+    /**
+     * Get hash code
+     *
+     * @return string Hash code
+     */
+    public function getHashCode()
+    {
+        return md5($this->_author . $this->_text->getHashCode() . $this->_width . $this->_height . $this->_marginLeft . $this->_marginTop . ($this->_visible ? 1 : 0) . $this->_fillColor->getHashCode() . $this->_alignment . __CLASS__);
     }
 
-	/**
-	 * Implement PHP __clone to create a deep clone, not just a shallow copy.
-	 */
-	public function __clone() {
-		$vars = get_object_vars($this);
-		foreach ($vars as $key => $value) {
-			if (is_object($value)) {
-				$this->$key = clone $value;
-			} else {
-				$this->$key = $value;
-			}
-		}
-	}
+    /**
+     * Implement PHP __clone to create a deep clone, not just a shallow copy.
+     */
+    public function __clone()
+    {
+        $vars = get_object_vars($this);
+        foreach ($vars as $key => $value) {
+            if (is_object($value)) {
+                $this->$key = clone $value;
+            } else {
+                $this->$key = $value;
+            }
+        }
+    }
 }

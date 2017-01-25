@@ -43,13 +43,12 @@ error_reporting(E_ALL);
  * print_r($_api->getErrors());
  * }
  */
- 
- /**
-  * DEV NOTES:
-  * 
-  * Detect bad user and/or password when making curl call
-  */
- 
+
+/**
+ * DEV NOTES:
+ *
+ * Detect bad user and/or password when making curl call
+ */
 class MAX_API_Get
 {
     
@@ -65,7 +64,7 @@ class MAX_API_Get
     const ENV_VAR = "BWT_CONFIG_PATH";
 
     const DS = DIRECTORY_SEPARATOR;
-    
+
     const LOG_STR = PHP_EOL . "STEP DETAIL: %s" . PHP_EOL . "LOG HEADER: %s" . PHP_EOL . "LOG DETAIL: %s" . PHP_EOL . "FUNCTION: %s" . PHP_EOL . "LINE: %s";
 
     const ERR_STR = PHP_EOL . "STEP DETAIL: %s" . PHP_EOL . "ERROR HEADER: %s" . PHP_EOL . "ERROR DETAIL: %s" . PHP_EOL . "FUNCTION: %s" . PHP_EOL . "LINE: %s";
@@ -511,32 +510,32 @@ class MAX_API_Get
             if (getenv(self::ENV_VAR)) {
                 
                 $_ini_path = getenv(self::ENV_VAR);
-            
+                
                 $ini = $_ini_path . self::DS . self::INI_FILE;
-            
+                
                 if (is_file($ini) === FALSE) {
                     $this->addError('Load INI File', 'INI File Not Found: ', $ini, __FUNCTION__, __LINE__);
                     return FALSE;
                 }
-            
-                $data = parse_ini_file($ini);
-            
-                if ((array_key_exists("apiuserpwd", $data) && $data["apiuserpwd"]) && (array_key_exists("apiusertestpwd", $data) && $data["apiusertestpwd"])) {
                 
+                $data = parse_ini_file($ini);
+                
+                if ((array_key_exists("apiuserpwd", $data) && $data["apiuserpwd"]) && (array_key_exists("apiusertestpwd", $data) && $data["apiusertestpwd"])) {
+                    
                     switch ($_mode) {
                         case "live":
-                        {
+                            {
                                 $this->_maxurl = self::LIVE_URL;
                                 $this->_apiuserpwd = $data['apiuserpwd'];
                                 break;
-                        }
+                            }
                         case "test":
                         default:
-                        {
-                            $this->_maxurl = self::TEST_URL;
-                            $this->_apiuserpwd = $data['apiusertestpwd'];
-                            break;
-                        }
+                            {
+                                $this->_maxurl = self::TEST_URL;
+                                $this->_apiuserpwd = $data['apiusertestpwd'];
+                                break;
+                            }
                     }
                 } else {
                     $this->addError('Validate INI File Data', 'Required fields not found', 'Please check that apiuserpwd key=value is present in file: ' . $ini, __FUNCTION__, __LINE__);
@@ -546,7 +545,6 @@ class MAX_API_Get
                 $this->addError('object construct', '__construct failed with an Exception:', 'Environment variable expected but not found: ' . self::ENV_VAR, __FUNCTION__, __LINE__);
                 return FALSE;
             }
-            
         } catch (Exception $e) {
             $this->addError('object construct', '__construct failed with an Exception:', $e->getMessage(), __FUNCTION__, __LINE__);
             return FALSE;
@@ -599,8 +597,8 @@ class MAX_API_Get
     /**
      * MAX_API_Get::splitResultIntoDataArray()
      * Clean HTML string and extract data into an array
-     * 
-     * @param string $_htmlResponse
+     *
+     * @param string $_htmlResponse            
      * @return mixed
      */
     private function splitResultIntoDataArray($_htmlResponse)
@@ -733,28 +731,28 @@ class MAX_API_Get
         }
         return FALSE;
     }
-    
+
     /**
      * MAX_API_Get::addLogEntry($_step, $_logTitle, $_logDetail, $_func = NULL, $_line = NULL)
      * Add a new log entry to the class protected property _logs
      *
-     * @param string $_step
-     * @param string $_logTitle
-     * @param string $_logDetail
-     * @param string $_func
-     * @param string $_line
+     * @param string $_step            
+     * @param string $_logTitle            
+     * @param string $_logDetail            
+     * @param string $_func            
+     * @param string $_line            
      * @return bool
      *
      */
     private function addLogEntry($_step, $_logTitle, $_logDetail, $_func = NULL, $_line = NULL)
     {
         if (is_string($_step) && is_string($_logTitle) && $_step && $_logTitle && $_logDetail) {
-    
+            
             // Build log message string to store as new indice in logs array
             $_logMsg = sprintf(self::LOG_STR, strval($_step), strval($_logTitle), strval($_logDetail), strval($_func), strval($_line));
-    
+            
             if ($_logMsg && is_string($_logMsg)) {
-    
+                
                 $this->_logs[] = $_logMsg;
                 return TRUE;
             }
@@ -766,7 +764,7 @@ class MAX_API_Get
      * MAX_API_Get::getDataFromHTML()
      * Clean HTML string and extract data into an array
      *
-     * @param array $_htmlData
+     * @param array $_htmlData            
      * @return mixed
      */
     private function extractDataFromHTML($_htmlData)
