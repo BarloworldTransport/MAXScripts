@@ -16,3 +16,10 @@ clia DataView addField objectRegistry=udo_StopOrder type=ItemListDataView name="
 clia DataView addField objectRegistry=udo_StopOrder type=ItemListDataView name="Stop Order Report" label="Time Created" source="time_created"
 clia DataView addField objectRegistry=udo_StopOrder type=ItemListDataView name="Stop Order Report" label="Created By" source="created_by"
 clia Report create name="Stop Order Report" objectRegistry=udo_StopOrder dataView="Stop Order Report" dataViewType=ItemListDataView primaryOwner="Justin Ward" primaryOwnerCrud="Create, Read, Update, Delete" groupOwner="Manline" groupOwnerCrud="Read"
+
+
+
+
+# 2017-02-14
+clia DataView addField objectRegistry=udo_StopOrder type=ItemListDataView name="Stop Order Report" label="Order Number" source="ID" showInRelatedWidget=0
+clia DataView addField objectRegistry=udo_StopOrder type=ItemListDataView name="Stop Order Report" label="Comment" source="ID->ObjectNote.objectInstanceId->text" showInRelatedWidget=0
